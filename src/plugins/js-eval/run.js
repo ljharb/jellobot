@@ -53,6 +53,7 @@ async function run(code, environment, timeout) {
       if (process.env.JSEVAL_MODE === 'b') {
         require('string.prototype.at/auto');
         require('array.prototype.at/auto');
+        require('@bloomberg/record-tuple-polyfill');
       }
       const script = new Script(code);
       global.module = module;
