@@ -108,7 +108,7 @@ const repastePlugin = (msg) => {
               msg.respondWithMention(`Failed to create gist. Possibly a rate limit`);
             } else {
               msg.respondWithMention(
-                `Failed due to an unknown error. GreenJello, ping! ${err.message}`,
+                `Failed due to an unknown error. ljharb, ping! ${err.message}`,
               );
               console.error(err);
             }
@@ -147,7 +147,7 @@ function getCode(msg, url) {
   const rawFiles = pasteUrlToRaw(url);
   if (!rawFiles) {
     msg.respondWithMention(
-      `I don't know the paste service at "${url}". GreenJello, ping!`,
+      `I don't know the paste service at "${url}". ljharb, ping!`,
     );
     return Promise.reject({ type: 'InvalidUrl' });
   }
