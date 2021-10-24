@@ -13107,12 +13107,13 @@
 			"changes": []
 		},
 		"ops": {
-			"value": "The ##javascript ops are: buu inimino gkatsev Agamemnus Maxdamantus GreenJello jaawerth niggler theskillwithin. In case of an emergency requiring op attention, activate !emergency",
+			"value": "The #javascript ops are: ljharb stenno snek sheetjs jaawerth gkatsev theskillwithin Maxdamantus buu. In case of an emergency requiring op attention, activate !emergency",
 			"creator": "ljharb",
-			"date": "2020-06-05T22:53:06.958Z",
+			"date": "2021-10-24T18:07:31.471Z",
 			"popularity": 20,
 			"editors": [
-				"theskillwithin"
+				"theskillwithin",
+				"ljharb"
 			],
 			"changes": [
 				{
@@ -13120,6 +13121,12 @@
 					"editor": "theskillwithin",
 					"old-value": "The ##javascript ops are: buu inimino gkatsev Agamemnus Maxdamantus dilvie Sorella GreenJello jaawerth niggler. In case of an emergency requiring op attention, activate !emergency",
 					"new-value": "The ##javascript ops are: buu inimino gkatsev Agamemnus Maxdamantus GreenJello jaawerth niggler theskillwithin. In case of an emergency requiring op attention, activate !emergency"
+				},
+				{
+					"date": "2021-10-24T18:07:31.471Z",
+					"editor": "ljharb",
+					"old-value": "The ##javascript ops are: buu inimino gkatsev Agamemnus Maxdamantus GreenJello jaawerth niggler theskillwithin. In case of an emergency requiring op attention, activate !emergency",
+					"new-value": "The #javascript ops are: ljharb stenno snek sheetjs jaawerth gkatsev theskillwithin Maxdamantus buu. In case of an emergency requiring op attention, activate !emergency"
 				}
 			]
 		},
