@@ -24,9 +24,14 @@ module.exports = async function jsEvalPlugin({ mentionUser, respond, message, do
     return;
   }
 
-  if (mode === '?') return respond((mentionUser ? `${mentionUser}, ` : '') + helpMsg);
+  if (mode === '?') {
+    respond((mentionUser ? `${mentionUser}, ` : '') + helpMsg);
+    return;
+  }
 
-  if (!envs[mode]) return;
+  if (!envs[mode]) {
+    return;
+  }
 
   let code = message.slice(2);
 

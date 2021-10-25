@@ -7,7 +7,7 @@ const getJsfiddle = require('./jsfiddle/getJsfiddle');
 
 const matchUrl = (text) => {
   const match = text.match(
-    /(http|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/,
+    /(http|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?/,
   ); // eslint-disable-line
   if (match) return match[0];
   return match;
@@ -26,7 +26,51 @@ const findLinkInLogs = (msg, user) => {
   return [];
 };
 
-const repastePlugin = (msg) => {
+async function getCode(msg, url) {
+  if (/jsfiddle\.net/.test(url)) {
+    return getJsfiddle(url);
+  }
+
+  const rawFiles = pasteUrlToRaw(url);
+  if (!rawFiles) {
+    msg.respondWithMention(
+      `I don't know the paste service at "${url}". ljharb, ping!`,
+    );
+    return Promise.reject({ type: 'InvalidUrl' });
+  }
+  msg.vlog(`Fetching ${rawFiles.js}, ${rawFiles.css}, ${rawFiles.html}`);
+  const files = await Promise.all(Object.entries(rawFiles).map(([extension, value]) => {
+    const transformedUrl = typeof value === 'string' ? value : value.url;
+    const transform =
+      typeof value.transform === 'function' ? value.transform : (x) => x;
+
+    console.log({ extension, url, transformedUrl });
+    return superagent.get(transformedUrl).then((res) => {
+      let { text } = res;
+
+      text = transform(text);
+
+      if (!text) {
+        return null;
+      }
+
+      if (/text\/html/i.test(res.headers['content-type'])) {
+        const $ = cheerio.load(text);
+        const fromHtml = $('body').text();
+        if (fromHtml) {
+          text = fromHtml;
+        }
+      }
+
+      msg.vlog(`Fetched ${rawFiles[extension]} with body length ${text.length}`);
+      return { extension, text };
+    });
+  }));
+
+  return Object.fromEntries(files.filter(Boolean).map(({ extension, text }) => [extension, text]));
+}
+
+module.exports = async function repastePlugin(msg) {
   if (!msg.command) return Promise.resolve();
   const words = msg.command.command.split(' ');
   if (words[0] === 'unpaste') {
@@ -49,7 +93,7 @@ const repastePlugin = (msg) => {
     );
     return Promise.reject();
   }
-  if (words[0] !== 'repaste') return Promise.resolve();
+  if (words[0] !== 'repaste') return undefined;
 
   msg.handling();
 
@@ -135,59 +179,5 @@ const repastePlugin = (msg) => {
       `I couldn't find a link in the past 500 messages. Maybe I was restarted recently.`,
     );
   }
-
-  return Promise.resolve();
+  return undefined;
 };
-
-function getCode(msg, url) {
-  if (/jsfiddle\.net/.test(url)) {
-    return getJsfiddle(url);
-  }
-
-  const rawFiles = pasteUrlToRaw(url);
-  if (!rawFiles) {
-    msg.respondWithMention(
-      `I don't know the paste service at "${url}". ljharb, ping!`,
-    );
-    return Promise.reject({ type: 'InvalidUrl' });
-  }
-  msg.vlog(`Fetching ${rawFiles.js}, ${rawFiles.css}, ${rawFiles.html}`);
-  const filePromises = Object.entries(rawFiles).map(([extension, value]) => {
-    const transformedUrl = typeof value === 'string' ? value : value.url;
-    const transform =
-      typeof value.transform === 'function' ? value.transform : (x) => x;
-
-    console.log({ extension, url, transformedUrl });
-    return superagent.get(transformedUrl).then((res) => {
-      let { text } = res;
-
-      text = transform(text);
-
-      if (!text) {
-        return null;
-      }
-
-      if (/text\/html/i.test(res.headers['content-type'])) {
-        const $ = cheerio.load(text);
-        const fromHtml = $('body').text();
-        if (fromHtml) {
-          text = fromHtml;
-        }
-      }
-
-      msg.vlog(`Fetched ${rawFiles[extension]} with body length ${text.length}`);
-      return { extension, text };
-    });
-  });
-
-  return Promise.all(filePromises).then((results) => {
-    return results
-      .filter(Boolean)
-      .reduce(
-        (acc, { extension, text }) => Object.assign(acc, { [extension]: text }),
-        {},
-      );
-  });
-}
-
-module.exports = repastePlugin;

@@ -27,7 +27,7 @@ it('works for ascii trim cases', () => {
     const s = asciiAlpha;
     expect({ size, text: overflow.ellipses(s, size).toString() }).toEqual({
       size,
-      text: s.slice(0, size - 4) + ' …',
+      text: `${s.slice(0, size - 4)} …`,
     });
   };
 

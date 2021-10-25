@@ -51,6 +51,7 @@ async function run(code, environment, timeout) {
   switch (environment) {
     case 'node-cjs': {
       if (process.env.JSEVAL_MODE === 'b') {
+        /* eslint global-require: 1 */
         require('string.prototype.at/auto');
         require('array.prototype.at/auto');
         require('@bloomberg/record-tuple-polyfill');
@@ -59,8 +60,8 @@ async function run(code, environment, timeout) {
       global.module = module;
       global.require = require;
       global.exports = exports;
-      global.__dirname = __dirname;
-      global.__filename = __filename;
+      global.__dirname = __dirname; // eslint-disable-line no-underscore-dangle
+      global.__filename = __filename; // eslint-disable-line no-underscore-dangle
       builtinModules.forEach(exposeBuiltinInGlobal);
       const result = await script.runInThisContext({
         timeout,

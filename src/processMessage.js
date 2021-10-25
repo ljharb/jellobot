@@ -24,7 +24,7 @@ function processMessage(client, config, logs, from, to, message) {
       .join(' ')
       .slice(0, 1000);
 
-    const prefix = client.currentPrefix || client.currentNick + '!' + '_'.repeat(50);
+    const prefix = client.currentPrefix || `${client.currentNick}!${'_'.repeat(50)}`;
 
     const head = `:${prefix} PRIVMSG ${to} :`;
     const tail = `\r\n`;
@@ -72,9 +72,7 @@ function processMessage(client, config, logs, from, to, message) {
   } else {
     messageObj.pm = false;
 
-    const channelConfig = config.channels.find((channel) => {
-      return channel.name && channel.name.toLowerCase() === to.toLowerCase();
-    });
+    const channelConfig = config.channels.find((channel) => channel.name && channel.name.toLowerCase() === to.toLowerCase());
 
     if (channelConfig) {
       messageObj.channel = to;

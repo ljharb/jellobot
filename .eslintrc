@@ -1,0 +1,49 @@
+{
+  "root": true,
+  "extends": [
+    "airbnb-base",
+    "prettier",
+  ],
+  "parser": "babel-eslint",
+  "plugins": [
+    "import",
+    "jasmine",
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "jest": true,
+    "jasmine": true,
+  },
+  "settings": {
+    "import/parser": "babel-eslint",
+    "ecmaFeatures": {
+      "classes": true,
+      "jsx": true
+    }
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": [2, {
+      "devDependencies": [
+        "**/__tests__/**", // jest pattern
+        "scripts/**", // our dev scripts
+      ]
+    }],
+    "max-len": [1, 120],
+    "no-console": [2, {
+      "allow": ["debug", "warn", "error", "log"],
+    }],
+    "no-empty": 1,
+    "no-restricted-syntax": 0,
+    "object-curly-newline": 0,
+    "prefer-promise-reject-errors": 1,
+  },
+  "overrides": [
+    {
+      "files": "scripts/**",
+      "rules": {
+        "no-underscore-dangle": 1, // TODO: refactor to use private fields
+      }
+    }
+  ]
+}

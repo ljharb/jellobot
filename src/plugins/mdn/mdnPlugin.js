@@ -93,9 +93,7 @@ async function fixLanguage(origRes, lastRedirect) {
   const urlParts = url.parse(lastRedirect);
   urlParts.pathname = urlParts.pathname.replace(
     /^\/(\w+)(\/docs\/)/,
-    (m, lang, rest) => {
-      return `/en-US${rest}`;
-    },
+    (m, lang, rest) => `/en-US${rest}`,
   );
 
   // If we changed the URL, we need to do another request for it

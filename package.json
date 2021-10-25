@@ -7,6 +7,8 @@
   "author": "Frankie Bagnardi <f.bagnardi@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "lint": "eslint --ext=js,mjs .",
+    "pretest": "npm run lint",
     "test": "jest",
     "posttest": "aud --production",
     "format": "npx prettier --write '{src/**/*.js,scripts/**/*.js,scripts/**/*.sh,README.md}'",
@@ -45,6 +47,7 @@
     "@babel/traverse": "^7.15.4",
     "@bloomberg/record-tuple-polyfill": "^0.0.3",
     "@iarna/toml": "^2.2.5",
+    "array.prototype.at": "^1.0.3",
     "bluebird": "^3.7.2",
     "chalk": "^4.1.2",
     "cheerio": "^0.22.0",
@@ -59,6 +62,7 @@
     "node-fetch": "^2.6.5",
     "prettier": "^1.19.1",
     "shell-escape": "^0.2.0",
+    "string.prototype.at": "^1.0.3",
     "superagent": "^5.3.1"
   },
   "devDependencies": {
@@ -68,12 +72,10 @@
     "babel-eslint": "^10.1.0",
     "babel-jest": "^27.3.1",
     "eslint": "^7.32.0",
-    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-jasmine": "^4.1.2",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-react": "^7.26.1",
     "jest": "^27.3.1",
     "jest-cli": "^27.3.1",
     "nearley": "^2.20.1",

@@ -117,7 +117,7 @@ factoidPlugin.messageToFactoid = async (msg) => {
 
   const fact = facts[key];
   if (!fact || !has.call(facts, key)) {
-    return;
+    return undefined;
   }
 
   if (fact.alias) {

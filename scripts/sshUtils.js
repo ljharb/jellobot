@@ -37,7 +37,7 @@ class SshConnection {
   async getPem() {
     if (this.pem) return this.pem;
 
-    const key = this.opts.key;
+    const {key} = this.opts;
     let pem = null;
     if (!key && this.opts.keyPath) {
       pem = await readFile(this.opts.keyPath, 'utf-8');
@@ -72,13 +72,12 @@ class SshConnection {
       conn.on('ready', () => {
         resolve(conn);
       });
-      this.endPromise = new Promise((resolve) => {
+      this.endPromise = new Promise((endResolve) => {
         conn.on('close', (hadError) => {
-          resolve(hadError);
+          endResolve(hadError);
           if (hadError) {
             console.error('ssh closed with unknown error');
             process.exit(7);
-            reject();
           } else {
             this.opts.log.verbose(`ssh closed successfully`);
           }
@@ -95,11 +94,15 @@ class SshConnection {
       });
     });
   }
+
   async ftp() {
     if (!this._ftpPromise) {
       this._ftpPromise = new Promise((resolve, reject) => {
         this.conn.sftp((err, sc) => {
-          if (err) return reject(err);
+          if (err) {
+            reject(err);
+            return;
+          }
           Bluebird.promisifyAll(sc);
           resolve(sc);
         });
@@ -113,7 +116,7 @@ class SshConnection {
     if (this._ftpPromise) {
       (await this._ftpPromise).end();
     }
-    const matchingIndex = conns.findIndex((x) => (x.conn = this.conn));
+    const matchingIndex = conns.findIndex((x) => (x.conn = this.conn)); // eslint-disable-line no-return-assign, no-param-reassign
     conns.splice(matchingIndex, 1);
     return this.endPromise;
   }
@@ -136,14 +139,17 @@ class SshConnection {
       if (opts.cwd) execOpts.cwd = opts.cwd;
 
       this.conn.exec(command, execOpts, (err, stream) => {
-        if (err) return reject(err);
+        if (err) {
+          reject(err);
+          return;
+        }
         if (!opts.silent) {
           let tempLog = `Running command: ${command}`;
           if (opts.name) tempLog = `Running command on ${opts.name}: ${command}`;
           this.opts.log.verbose(tempLog);
         }
 
-        let events = [];
+        const events = [];
         let stdout = '';
         stream.on('data', (s) => {
           if (opts.log.flags.debug) {
@@ -180,7 +186,6 @@ class SshConnection {
               }
             });
             reject({ code, res });
-            return;
           } else resolve(stdout);
         });
       });
@@ -204,6 +209,7 @@ class SshConnection {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   validateAndFixCommand(_command, opts) {
     let command = _command;
     if (/apt-get install/.test(command) && !/-y/.test(command)) {

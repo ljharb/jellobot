@@ -1,4 +1,4 @@
-const { factoids } = require('./src/plugins/factoids/facts.json');
+const { factoids } = require('../src/plugins/factoids/facts.json');
 
 const USER = process.env[2];
 if (!USER) {
@@ -8,6 +8,7 @@ const items = [];
 let current = 0;
 let previous = 0;
 
+/* eslint no-continue: 1 */
 for (const [factoid, { changes }] of Object.entries(factoids)) {
   if (!changes) {
     continue;

@@ -6,7 +6,7 @@ const init = require('./plugins/initPlugins');
 chalk.enabled = true;
 
 const { readAndProcessConfig } = require('./utils/getConfig');
-const plugins = require('./plugins/plugins.js');
+const plugins = require('./plugins/plugins');
 const changeNick = require('./utils/changeNick');
 
 const logBotPrefix = chalk.black.bgYellow('BOT');
@@ -43,7 +43,7 @@ function updateConfig() {
 
   for (const server of newConfig.servers) {
     const prevServer = oldConfig.servers.find((old) => old.server === server.server);
-    const client = clients.find((client) => client.clientHost === server.server);
+    const client = clients.find(({ clientHost }) => clientHost === server.server);
     if (prevServer && client) {
       client.serverConfig = server;
 

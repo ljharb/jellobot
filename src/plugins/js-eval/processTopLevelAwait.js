@@ -24,16 +24,17 @@ module.exports = function processTopLevelAwait(root) {
           if (path.node.await === true) {
             containsAwait = true;
           }
-          return;
-
+          break;
         case 'AwaitExpression':
           containsAwait = true;
-          return;
-
+          break;
         case 'ReturnStatement':
           containsReturn = true;
-          return;
+          break;
+        default:
+          break;
       }
+      return undefined;
     },
   });
 
@@ -44,11 +45,11 @@ module.exports = function processTopLevelAwait(root) {
     return root;
   }
 
-  let last = root.program.body[root.program.body.length - 1];
+  const last = root.program.body[root.program.body.length - 1];
 
   // replace last node with a returnStatement of this node, if the last node is an expression
   if (last.type === 'ExpressionStatement') {
-    root.program.body[root.program.body.length - 1] = {
+    root.program.body[root.program.body.length - 1] = { // eslint-disable-line no-param-reassign
       type: 'ReturnStatement',
       argument: last.expression,
     };
