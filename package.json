@@ -9,7 +9,8 @@
   "scripts": {
     "lint": "eslint --ext=js,mjs .",
     "pretest": "npm run lint",
-    "test": "jest",
+    "tests-only": "jest",
+    "test": "npm run tests-only",
     "posttest": "aud --production",
     "format": "npx prettier --write '{src/**/*.js,scripts/**/*.js,scripts/**/*.sh,README.md}'",
     "start": "node src/bot.js"

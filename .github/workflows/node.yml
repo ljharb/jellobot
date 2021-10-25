@@ -1,0 +1,41 @@
+name: 'Tests: node.js'
+
+on: [pull_request, push]
+
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      requireds: ${{ steps.set-matrix.outputs.requireds }}
+    steps:
+      - uses: ljharb/actions/node/matrix@main
+        id: set-matrix
+        with:
+          type: 'majors'
+          preset: '>=14'
+
+  majors:
+    needs: [matrix]
+    name: 'latest minors'
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.matrix.outputs.requireds) }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ljharb/actions/node/install@main
+        name: 'nvm install ${{ matrix.node-version }} && npm install'
+        with:
+          use-npm-ci: true
+          node-version: ${{ matrix.node-version }}
+      - run: npm run tests-only
+      - uses: codecov/codecov-action@v2
+
+  node:
+    name: 'node 14+'
+    needs: [majors]
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo tests completed'
