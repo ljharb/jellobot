@@ -161,7 +161,7 @@ clients.forEach((client) => {
           });
 
         client.say('nickserv', `regain ${config.nick}`);
-      }, 1000);
+      }, 3e3);
     }
   });
   console.log(`${logBotPrefix}: Connecting to ${config.server} as ${config.nick}`);
