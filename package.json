@@ -13,7 +13,8 @@
     "test": "npm run tests-only",
     "posttest": "aud --production",
     "format": "npx prettier --write '{src/**/*.js,scripts/**/*.js,scripts/**/*.sh,README.md}'",
-    "start": "node src/bot.js"
+    "start": "node src/bot.js",
+    "update-docker": "src/plugins/js-eval/init"
   },
   "dependencies": {
     "@babel/core": "^7.15.8",

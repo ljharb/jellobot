@@ -95,11 +95,11 @@ async function run() {
       console.error(`Restarting the bot`);
       try {
         await nvmExec(
-          `cd ${dir}; pwd; env NODE_ENV=production pm2 restart jellobot1`,
+          `cd ${dir}; pwd; env NODE_ENV=production pm2 restart jellobot1 --watch=${dir}`,
         );
       } catch (e) {
         await nvmExec(
-          `cd ${dir}; pwd; env NODE_ENV=production pm2 start --name jellobot1 src/bot.js`,
+          `cd ${dir}; pwd; env NODE_ENV=production pm2 start --name jellobot1 src/bot.js --watch=${dir}`,
         );
       }
     } else {
