@@ -46,7 +46,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.15.4",
     "@babel/plugin-transform-typescript": "^7.15.8",
     "@babel/traverse": "^7.15.4",
-    "@bloomberg/record-tuple-polyfill": "^0.0.3",
+    "@bloomberg/record-tuple-polyfill": "^0.0.4",
     "@iarna/toml": "^2.2.5",
     "array.prototype.at": "^1.0.3",
     "bluebird": "^3.7.2",
