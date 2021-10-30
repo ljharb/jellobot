@@ -39,35 +39,39 @@ async function getCode(msg, url) {
     return Promise.reject({ type: 'InvalidUrl' });
   }
   msg.vlog(`Fetching ${rawFiles.js}, ${rawFiles.css}, ${rawFiles.html}`);
-  const files = await Promise.all(Object.entries(rawFiles).map(([extension, value]) => {
-    const transformedUrl = typeof value === 'string' ? value : value.url;
-    const transform =
-      typeof value.transform === 'function' ? value.transform : (x) => x;
+  const files = await Promise.all(
+    Object.entries(rawFiles).map(([extension, value]) => {
+      const transformedUrl = typeof value === 'string' ? value : value.url;
+      const transform =
+        typeof value.transform === 'function' ? value.transform : (x) => x;
 
-    console.log({ extension, url, transformedUrl });
-    return superagent.get(transformedUrl).then((res) => {
-      let { text } = res;
+      console.log({ extension, url, transformedUrl });
+      return superagent.get(transformedUrl).then((res) => {
+        let { text } = res;
 
-      text = transform(text);
+        text = transform(text);
 
-      if (!text) {
-        return null;
-      }
-
-      if (/text\/html/i.test(res.headers['content-type'])) {
-        const $ = cheerio.load(text);
-        const fromHtml = $('body').text();
-        if (fromHtml) {
-          text = fromHtml;
+        if (!text) {
+          return null;
         }
-      }
 
-      msg.vlog(`Fetched ${rawFiles[extension]} with body length ${text.length}`);
-      return { extension, text };
-    });
-  }));
+        if (/text\/html/i.test(res.headers['content-type'])) {
+          const $ = cheerio.load(text);
+          const fromHtml = $('body').text();
+          if (fromHtml) {
+            text = fromHtml;
+          }
+        }
 
-  return Object.fromEntries(files.filter(Boolean).map(({ extension, text }) => [extension, text]));
+        msg.vlog(`Fetched ${rawFiles[extension]} with body length ${text.length}`);
+        return { extension, text };
+      });
+    }),
+  );
+
+  return Object.fromEntries(
+    files.filter(Boolean).map(({ extension, text }) => [extension, text]),
+  );
 }
 
 module.exports = async function repastePlugin(msg) {

@@ -73,7 +73,6 @@ describe('jsEvalPlugin', () => {
     expect(output).toEqual(`(okay) undefined`);
   });
 
-
   describe('babel', () => {
     it(`runs with b>`, async () => {
       const output = await testEval(
@@ -100,7 +99,6 @@ describe('jsEvalPlugin', () => {
       expect(output).toEqual(`(okay) 3`);
     });
   });
-
 
   describe('top-level-await', () => {
     it('works', async () => {

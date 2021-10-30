@@ -49,7 +49,8 @@ module.exports = function processTopLevelAwait(root) {
 
   // replace last node with a returnStatement of this node, if the last node is an expression
   if (last.type === 'ExpressionStatement') {
-    root.program.body[root.program.body.length - 1] = { // eslint-disable-line no-param-reassign
+    // eslint-disable-next-line no-param-reassign
+    root.program.body[root.program.body.length - 1] = {
       type: 'ReturnStatement',
       argument: last.expression,
     };

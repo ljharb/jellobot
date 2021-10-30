@@ -17,7 +17,13 @@ const envs = {
   b: 'node-cjs',
 };
 
-module.exports = async function jsEvalPlugin({ mentionUser, respond, message, dockerCmd = 'docker', runFilePath = '/run/run.js' }) {
+module.exports = async function jsEvalPlugin({
+  mentionUser,
+  respond,
+  message,
+  dockerCmd = 'docker',
+  runFilePath = '/run/run.js',
+}) {
   const mode = message[0];
 
   if (message[1] !== '>') {

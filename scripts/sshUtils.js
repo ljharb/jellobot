@@ -37,7 +37,7 @@ class SshConnection {
   async getPem() {
     if (this.pem) return this.pem;
 
-    const {key} = this.opts;
+    const { key } = this.opts;
     let pem = null;
     if (!key && this.opts.keyPath) {
       pem = await readFile(this.opts.keyPath, 'utf-8');
