@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const babel = require('@babel/core');
 const babelGenerator = require('@babel/generator').default;
 const babelParser = require('@babel/parser');
+const exec = require('../../utils/exec');
 const processTopLevelAwait = require('./processTopLevelAwait');
 const { parserPlugins, transformPlugins } = require('./babelPlugins');
 
@@ -63,8 +64,9 @@ module.exports = async function jsEvalPlugin({
     }
   }
 
+  const name = `jseval-${crypto.randomBytes(8).toString('hex')}`;
+
   try {
-    const name = `jseval-${crypto.randomBytes(8).toString('hex')}`;
     const args = [
       'run',
       '-i',
@@ -82,55 +84,23 @@ module.exports = async function jsEvalPlugin({
       runFilePath,
     ];
 
-    let timeout;
-    let data = '';
+    const data = await exec(dockerCmd, args, { stdin: code, timeout: timeoutMs });
 
-    const result = await Promise.race([
-      new Promise((resolve, reject) => {
-        const proc = cp.spawn(dockerCmd, args);
-
-        proc.stdin.write(code);
-        proc.stdin.end();
-
-        proc.stdout.on('data', (chunk) => {
-          data += chunk;
-        });
-
-        proc.stderr.on('data', (chunk) => {
-          data += chunk;
-        });
-
-        proc.on('error', reject);
-
-        proc.on('exit', (status) => {
-          if (status !== 0) {
-            reject(new Error(data));
-          } else {
-            resolve(data.trim());
-          }
-        });
-      }).finally(() => clearTimeout(timeout)),
-      new Promise((resolve) => {
-        timeout = setTimeout(resolve, timeoutMs + 10);
-      }).then(() => {
-        cp.execSync(`${dockerCmd} kill --signal=9 ${name}`);
-        throw Object.assign(new Error(data), { reason: 'timeout' }); // send data received so far in the error msg
-      }),
-    ]);
-
-    let clean = result.trim();
-
-    clean = clean.replace(/(\S)\s*⬊ (undefined|null)$/, '$1');
-    clean = clean.replace(/⬊\s*/, '');
-    clean = clean.trim();
+    const clean = data
+      .replace(/(\S)\s*⬊ (undefined|null)$/, '$1')
+      .replace(/⬊\s*/, '')
+      .trim();
 
     respond((mentionUser ? `${mentionUser}, ` : '(okay) ') + clean);
   } catch (e) {
-    let clean = e.message.trim();
-    clean = clean.replace(/⬊\s*/, '');
-    clean = clean.trim();
+    if (e.name === 'TimeoutError') {
+      cp.execSync(`${dockerCmd} kill --signal=9 ${name}`);
+    }
 
-    respond((mentionUser ? `${mentionUser}, ` : `(${e.reason || 'fail'}) `) + clean); // Error message always start with Error:
+    const clean = e.message.replace(/⬊\s*/, '').trim();
+    const reason = e.name === 'TimeoutError' ? 'timeout' : 'fail';
+
+    respond((mentionUser ? `${mentionUser}, ` : `(${reason}) `) + clean); // Error message always start with Error:
   }
 };
 

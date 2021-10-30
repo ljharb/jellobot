@@ -1,10 +1,12 @@
-const cp = require('child_process');
-const util = require('util');
 const { messageToFactoid } = require('../factoids/factoidsPlugin');
+const exec = require('../../utils/exec');
 
-const exec = util.promisify(cp.exec);
+const getDesc = (description, maxLen = 100) =>
+  description
+    ? `${description.slice(0, maxLen)}${description.length > maxLen ? '…' : ''}`
+    : '(no description)';
 
-const npmPlugin = async (msg) => {
+module.exports = async function npmPlugin(msg) {
   if (!msg.command) return;
 
   const words = msg.command.command.split(' ');
@@ -23,26 +25,48 @@ const npmPlugin = async (msg) => {
 
   msg.handling();
 
-  if (!/^[a-zA-Z0-9_.-]{3,}$/.test(name)) {
+  if (!/^[a-zA-Z0-9_.@/~-]{3,}$/.test(name)) {
     msg.respondWithMention(`that doesn't look like a valid package name`);
     return;
   }
 
-  let stdout;
-  let stderr;
-  try {
-    ({ stdout, stderr } = await exec(`npm info "${name}" --json`));
-    const data = JSON.parse(stdout);
+  if (name.startsWith('~')) {
+    try {
+      const stdout = await exec('npm', ['search', name.slice(1), '--json']);
+      const data = JSON.parse(stdout);
 
-    msg.respondWithMention(
-      `${name}@${data.version}: ${
-        data.description ? data.description.slice(0, 100) : '(no description)'
-      } - https://www.npmjs.com/package/${name}`,
-    );
-  } catch (e) {
-    msg.respondWithMention(`Failed to look up package`);
-    console.error(`stdout`, stdout, `stderr`, stderr);
+      msg.respondWithMention(
+        data
+          .slice(0, 5)
+          .map((p) =>
+            [
+              `npm.im/${p.name}`,
+              p.version,
+              p.date?.slice(0, 10),
+              getDesc(p.description, 80),
+            ].join('|'),
+          )
+          .join('\n'),
+      );
+    } catch (e) {
+      msg.respondWithMention('Failed to look up packages');
+    }
+  } else {
+    try {
+      const stdout = await exec('npm', ['info', name, '--json']);
+      const data = JSON.parse(stdout);
+      const version = data['dist-tags']?.latest; // data.version is not necessarily published yet
+
+      msg.respondWithMention(
+        [
+          `npm.im/${name}`,
+          version,
+          data.time?.[version]?.slice(0, 10),
+          getDesc(data.description),
+        ].join('|'),
+      );
+    } catch (err) {
+      msg.respondWithMention('Failed to look up package');
+    }
   }
 };
-
-module.exports = npmPlugin;

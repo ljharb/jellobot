@@ -4,7 +4,7 @@ const jsEval = require('../jsEvalPlugin');
 jest.setTimeout(30000);
 
 beforeAll(() => {
-  cp.execSync(`${__dirname}/../../../../src/plugins/js-eval/init`);
+  cp.execSync(`${__dirname}/../init`);
 });
 
 async function testEval(message, opts = {}) {
@@ -13,8 +13,10 @@ async function testEval(message, opts = {}) {
       ...opts,
       message,
       respond: resolve,
-      // dockerCmd: './duck',
-      // runFilePath: './run.js',
+      ...(process.env.MOCK_DOCKER && {
+        dockerCmd: `${__dirname}/../duck`,
+        runFilePath: `${__dirname}/../run.js`,
+      }),
     });
   });
 }

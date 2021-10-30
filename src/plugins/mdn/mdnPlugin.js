@@ -22,32 +22,28 @@ function getMdnTitle(title) {
   });
 }
 
+const findFirst = (parent, ...selectors) =>
+  selectors.flatMap((selector) => {
+    const $match = parent.find(selector);
+    return $match.first() || [];
+  })[0] || null;
+
 function extractFromHtml(html) {
   const $ = cheerio.load(html);
-
-  const findFirst = (parent, ...selectors) => {
-    for (const selector of selectors) {
-      const $match = parent.find(selector);
-      if ($match.length) {
-        return $match.first();
-      }
-    }
-    return null;
-  };
 
   // Note (March 2021): unclear if #wikiArticle will ever appear in the future. The following
   // can be grepped for in the logs to see if it happens in practice, and the code simplified
   // if not.
   const $article = findFirst($('body'), 'main#content', '#wikiArticle');
-  if ($article.attr('id') === 'wikiArticle') {
+  if ($article?.attr('id') === 'wikiArticle') {
     console.log('METRIC::MDN_WIKI_ARTICLE', new Date().toISOString());
   }
 
   const title = getMdnTitle(
     $article
-      .find('h1')
+      ?.find('h1')
       .first()
-      .text(),
+      .text() ?? 'Not found',
   );
 
   // Array#map: .seoSummary exists and contains the text we want
@@ -60,14 +56,12 @@ function extractFromHtml(html) {
   // Object#__proto__: There are .notecard elements we don't want to match, which contain <p> elements,
   // followed by a <p> we do want to match.
   // Command: !mdn object.__proto__
-  const text = findFirst(
-    $article,
-    '.seoSummary',
-    ':not(.notecard) > p:not(.notecard)',
-  )
-    .text()
-    .replace(/\s+/g, ' ')
-    .trim();
+  const text =
+    $article &&
+    findFirst($article, '.seoSummary', ':not(.notecard) > p:not(.notecard)')
+      .text()
+      .replace(/\s+/g, ' ')
+      .trim();
 
   if (!text) {
     const bodyText = $('body')
@@ -109,7 +103,7 @@ async function fixLanguage(origRes, lastRedirect) {
 
 async function fixRedirect(res) {
   const $ = cheerio.load(res.text);
-  const meta = $('meta[http-equiv="refresh"]').attr('content');
+  const meta = $('meta[http-equiv="refresh"]')?.attr('content') || '';
   const reg = /url=\/l\/\?uddg=([^&]*)/;
   const match = meta.match(reg);
   if (!match) {
