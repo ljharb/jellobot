@@ -87,7 +87,7 @@ async function run() {
     );
     await ftp.writeFileAsync(`${dir}/jellobot-config.json`, configContent);
 
-    await nvmExec(`cd ${dir}; npm install`);
+    await nvmExec(`(which pm2 || npm install -g pm2@5); cd ${dir}; npm install`);
 
     await ssh.exec(`printf "${new Date().toISOString()}" > /tmp/jellobot-updated-at`);
 
