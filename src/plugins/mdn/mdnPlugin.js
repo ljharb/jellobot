@@ -35,15 +35,17 @@ function extractFromHtml(html) {
   // can be grepped for in the logs to see if it happens in practice, and the code simplified
   // if not.
   const $article = findFirst($('body'), 'main#content', '#wikiArticle');
-  if ($article?.attr('id') === 'wikiArticle') {
+  if ($article && $article.attr('id') === 'wikiArticle') {
     console.log('METRIC::MDN_WIKI_ARTICLE', new Date().toISOString());
   }
 
   const title = getMdnTitle(
-    $article
-      ?.find('h1')
-      .first()
-      .text() ?? 'Not found',
+    ($article &&
+      $article
+        .find('h1')
+        .first()
+        .text()) ||
+      'Not found',
   );
 
   // Array#map: .seoSummary exists and contains the text we want
@@ -103,7 +105,7 @@ async function fixLanguage(origRes, lastRedirect) {
 
 async function fixRedirect(res) {
   const $ = cheerio.load(res.text);
-  const meta = $('meta[http-equiv="refresh"]')?.attr('content') || '';
+  const meta = $('meta[http-equiv="refresh"]').attr('content') || '';
   const reg = /url=\/l\/\?uddg=([^&]*)/;
   const match = meta.match(reg);
   if (!match) {
