@@ -5,81 +5,10 @@ const { messageToFactoid } = require('../factoids/factoidsPlugin');
 
 function slugify(words) {
   return words
-    .map((x) => x.trim().toLowerCase())
+    .map((x) => x.trim())
     .join('-')
     .replace(/[^a-zA-Z0-9_.]+/g, '-')
     .replace(/^-|-$/g, '');
-}
-
-class HtmlParseError extends Error {}
-
-function getMdnTitle(title) {
-  return title.replace(/\s*-\s*(\w+\s*\w*)\s*\|\s*MDN/gi, (m, _type) => {
-    let type = _type;
-    if (type === 'JavaScript') type = null;
-    if (type === 'Web APIs') type = 'DOM';
-    return type ? `, ${type}` : '';
-  });
-}
-
-const findFirst = (parent, ...selectors) =>
-  selectors.flatMap((selector) => {
-    const $match = parent.find(selector);
-    return $match.first() || [];
-  })[0] || null;
-
-function extractFromHtml(html) {
-  const $ = cheerio.load(html);
-
-  // Note (March 2021): unclear if #wikiArticle will ever appear in the future. The following
-  // can be grepped for in the logs to see if it happens in practice, and the code simplified
-  // if not.
-  const $article = findFirst($('body'), 'main#content', '#wikiArticle');
-  if ($article && $article.attr('id') === 'wikiArticle') {
-    console.log('METRIC::MDN_WIKI_ARTICLE', new Date().toISOString());
-  }
-
-  const title = getMdnTitle(
-    ($article &&
-      $article
-        .find('h1')
-        .first()
-        .text()) ||
-      'Not found',
-  );
-
-  // Array#map: .seoSummary exists and contains the text we want
-  // Command: !mdn array.map
-  //
-  // Document#write: there is a deprecation warning, followed by the <p> we want. The
-  // seoSummary class doesn't match anything.
-  // Command: !mdn document.write
-  //
-  // Object#__proto__: There are .notecard elements we don't want to match, which contain <p> elements,
-  // followed by a <p> we do want to match.
-  // Command: !mdn object.__proto__
-  const text =
-    $article &&
-    findFirst($article, '.seoSummary', ':not(.notecard) > p:not(.notecard)')
-      .text()
-      .replace(/\s+/g, ' ')
-      .trim();
-
-  if (!text) {
-    const bodyText = $('body')
-      .text()
-      .replace(/\s+/g, ' ');
-
-    if (
-      /did not match any documents|No results containing all your search terms were found/.test(
-        bodyText,
-      )
-    ) {
-      throw new HtmlParseError(`No MDN page found with this search.`);
-    }
-    throw new HtmlParseError(`Failed to extract mdn text`);
-  }
-  return { text, title };
 }
 
 async function fixLanguage(origRes, lastRedirect) {
@@ -128,7 +57,7 @@ async function fixRedirect(res) {
   return res;
 }
 
-const mdnPlugin = async (msg) => {
+module.exports = async function mdnPlugin(msg) {
   if (!msg.command) return;
 
   const words = msg.command.command.split(' ');
@@ -175,23 +104,28 @@ const mdnPlugin = async (msg) => {
     return;
   }
 
-  let pageData;
-  try {
-    pageData = extractFromHtml(res.text);
-  } catch (e) {
-    if (!(e instanceof HtmlParseError)) throw e;
+  const $ = cheerio.load(res.text);
 
-    msg.respond(`${initialUrl} - ${e.message}`);
-    return;
-  }
+  const article = $('article');
 
-  let response = `${pageData.title.trim()} - ${pageData.text.trim()}`;
-  if (response.length > 400) {
-    response = `${response.slice(0, 350).trim()}…`;
-  }
-  response += ` ${initialUrl}`;
+  const isDeprecated = article
+    .find('.notecard.deprecated')
+    .text()
+    .trim();
 
-  msg.respondWithMention(response);
+  const firstP = article
+    .find('p') // if cheerio was less bad, we could do .first(':not(.notecard) > p')
+    .toArray()
+    .find((el) => !/notecard/.test(el.parent.attribs.class));
+
+  const description = $(firstP)
+    .text()
+    .trim()
+    .replace(/^The /, '');
+
+  msg.respondWithMention(
+    `${isDeprecated ? 'DEPRECATED ' : ''}${description.slice(0, 350)}${
+      description.length > 350 ? '…' : ''
+    } ${initialUrl}`,
+  );
 };
-
-module.exports = mdnPlugin;
