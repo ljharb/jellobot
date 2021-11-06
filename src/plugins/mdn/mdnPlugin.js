@@ -122,7 +122,7 @@ module.exports = async function mdnPlugin(msg) {
     .text()
     .trim()
     .replace(/^The /, '')
-    .replace(/  +/g, ' ');
+    .replace(/\s{2,}/g, ' ');
 
   msg.respondWithMention(
     `${isDeprecated ? 'DEPRECATED ' : ''}${description.slice(0, 350)}${
