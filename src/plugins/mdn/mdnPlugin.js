@@ -121,7 +121,8 @@ module.exports = async function mdnPlugin(msg) {
   const description = $(firstP)
     .text()
     .trim()
-    .replace(/^The /, '');
+    .replace(/^The /, '')
+    .replace(/  +/g, ' ');
 
   msg.respondWithMention(
     `${isDeprecated ? 'DEPRECATED ' : ''}${description.slice(0, 350)}${
