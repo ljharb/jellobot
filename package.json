@@ -18,7 +18,7 @@
     "update-docker": "src/plugins/js-eval/init"
   },
   "dependencies": {
-    "@babel/core": "^7.15.8",
+    "@babel/core": "^7.16.0",
     "@babel/generator": "^7.15.8",
     "@babel/parser": "^7.15.8",
     "@babel/plugin-proposal-async-do-expressions": "^7.14.5",
@@ -71,8 +71,6 @@
   "devDependencies": {
     "acorn": "^7.4.1",
     "aud": "^1.1.5",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^10.1.0",
     "babel-jest": "^27.3.1",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",

@@ -4,7 +4,6 @@
     "airbnb-base",
     "prettier",
   ],
-  "parser": "babel-eslint",
   "plugins": [
     "prettier",
     "import",
@@ -17,7 +16,6 @@
     "jasmine": true,
   },
   "settings": {
-    "import/parser": "babel-eslint",
     "ecmaFeatures": {
       "classes": true,
       "jsx": true
@@ -46,6 +44,12 @@
       "rules": {
         "no-underscore-dangle": 1, // TODO: refactor to use private fields
       }
-    }
+    },
+    {
+      "files": "src/plugins/**",
+      "parserOptions": {
+        "ecmaVersion": 2019,
+      },
+    },
   ]
 }

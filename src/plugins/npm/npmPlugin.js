@@ -42,7 +42,7 @@ module.exports = async function npmPlugin(msg) {
             [
               `npm.im/${p.name}`,
               p.version,
-              p.date?.slice(0, 10),
+              p.date && p.date.slice(0, 10),
               getDesc(p.description, 80),
             ].join('|'),
           )
@@ -55,13 +55,13 @@ module.exports = async function npmPlugin(msg) {
     try {
       const stdout = await exec('npm', ['info', name, '--json']);
       const data = JSON.parse(stdout);
-      const version = data['dist-tags']?.latest; // data.version is not necessarily published yet
+      const version = data['dist-tags'] && data['dist-tags'].latest; // data.version is not necessarily published yet
 
       msg.respondWithMention(
         [
           `npm.im/${name}`,
           version,
-          data.time?.[version]?.slice(0, 10),
+          ((data['dist-tags'] && data.time[version]) || '').slice(0, 10),
           getDesc(data.description),
         ].join('|'),
       );
