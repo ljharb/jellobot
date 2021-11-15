@@ -70,8 +70,7 @@ module.exports = async function mdnPlugin(msg) {
   }
   msg.handling();
 
-  const suffix = slugify(words.slice(1));
-  const initialUrl = `https://mdn.io/${suffix}`;
+  const initialUrl = `https://mdn.io/${slugify(words.slice(1))}`;
 
   let lastRedirect = initialUrl;
   let res = null;
