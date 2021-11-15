@@ -52,6 +52,7 @@
     "@iarna/toml": "^2.2.5",
     "array.prototype.at": "^1.0.3",
     "bluebird": "^3.7.2",
+    "caniuse-db": "^1.0.30001280",
     "chalk": "^4.1.2",
     "cheerio": "^1.0.0-rc.10",
     "dirsum": "^0.1.1",
