@@ -21,7 +21,7 @@ it('works', async () => {
 it('works for searches', async () => {
   const output = await testNpm('npm ~bootstrap');
 
-  const results = output.split('\n');
+  const results = output.split(' ⸺ ');
   expect(results.length).toBeGreaterThan(2);
 
   expect(results[0].split('|')[0]).toEqual('npm.im/bootstrap');

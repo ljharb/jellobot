@@ -9,17 +9,12 @@ const getDesc = (description, maxLen = 100) =>
 module.exports = async function npmPlugin(msg) {
   if (!msg.command) return;
 
-  const words = msg.command.command.split(' ');
-  if (words[0] !== 'npm') {
+  const [cmd, name] = msg.command.command.split(' ');
+  if (cmd !== 'npm' || !name) {
     return;
   }
   const factoid = await messageToFactoid(msg);
   if (factoid) {
-    return;
-  }
-
-  const name = words[1];
-  if (!name) {
     return;
   }
 
@@ -40,13 +35,13 @@ module.exports = async function npmPlugin(msg) {
           .slice(0, 5)
           .map((p) =>
             [
-              `npm.im/${p.name}`,
+              `npm.im/${p.name}`, // we could put the source link rather, using https://api.npms.io/v2/package/${p.name}
               p.version,
               p.date && p.date.slice(0, 10),
               getDesc(p.description, 80),
             ].join('|'),
           )
-          .join('\n'),
+          .join(' ⸺ '),
       );
     } catch (e) {
       msg.respondWithMention('Failed to look up packages');
