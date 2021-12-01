@@ -1,5 +1,5 @@
 async function init() {
-  for (const dir of ['js-eval', 'rng', 'factoids', 'mdn', 'npm']) {
+  for (const dir of ['js-eval', 'rng', 'factoids', 'mdn', 'npm', 'ciu']) {
     // eslint-disable-next-line
     await tryInit(dir);
   }

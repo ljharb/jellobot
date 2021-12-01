@@ -7,4 +7,5 @@ module.exports = () => ({
   mdn: require('./mdn/mdnPlugin'),
   jsEval: require('./js-eval/jsEvalPlugin'),
   npm: require('./npm/npmPlugin'),
+  ciu: require('./ciu/ciuPlugin'),
 });
