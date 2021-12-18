@@ -111,10 +111,6 @@ factoidPlugin.messageToFactoid = async (msg) => {
     return { find };
   }
 
-  if (key === 'source') {
-    return `I'm written in JS and my code can be found at https://github.com/brigand/jellobot`;
-  }
-
   const fact = facts[key];
   if (!fact || !has.call(facts, key)) {
     return undefined;
