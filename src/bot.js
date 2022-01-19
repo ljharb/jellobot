@@ -72,7 +72,7 @@ function updateConfig() {
   }
 }
 
-setInterval(updateConfig, 3000);
+setInterval(updateConfig, 3e3);
 
 clients.forEach((client) => {
   /* eslint-disable no-param-reassign */

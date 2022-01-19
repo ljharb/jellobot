@@ -42,7 +42,11 @@ module.exports = function changeNick(client, newNick, doGhost) {
 
     // Attempt to ghost the nick, but if we don't get a response for 10 seconds
     // then go ahead and change the nick anyway.
-    const timeout = new Promise((resolve) => setTimeout(() => resolve(), 10e3));
+    const timeout = new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 10e3);
+    });
     const gotPm = new Promise((resolve) => {
       cleanup = () => client.removeListener('pm', handlePm);
       client.on('pm', (nick, text) => {
