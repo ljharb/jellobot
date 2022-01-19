@@ -39,7 +39,9 @@ module.exports = async function npmPlugin(msg) {
               p.version,
               p.date && p.date.slice(0, 10),
               getDesc(p.description, 80),
-            ].join('|'),
+            ]
+              .join('|')
+              .replace('|', ' '),
           )
           .join(' ⸺ '),
       );
@@ -58,7 +60,9 @@ module.exports = async function npmPlugin(msg) {
           version,
           ((data['dist-tags'] && data.time[version]) || '').slice(0, 10),
           getDesc(data.description),
-        ].join('|'),
+        ]
+          .join('|')
+          .replace('|', ' '),
       );
     } catch (err) {
       msg.respondWithMention('Failed to look up package');
