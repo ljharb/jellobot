@@ -80,6 +80,7 @@ module.exports = async function jsEvalPlugin({
       'node',
       '--experimental-vm-modules', // used by m>
       '--experimental-modules',
+      '--experimental-fetch',
       '--no-warnings',
       runFilePath,
     ];
