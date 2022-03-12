@@ -5,8 +5,6 @@ const builtinModules = require('module').builtinModules.filter(
 );
 const { setTimeout } = require('timers/promises');
 
-const childProc = require('child_process');
-
 // code taken from https://github.com/devsnek/docker-js-eval/run.js
 
 const inspect = (val) => {
@@ -50,16 +48,6 @@ function exposeBuiltinInGlobal(name) {
 }
 
 async function run(code, environment, timeout) {
-  delete childProc.exec;
-  delete childProc.execSync;
-  delete childProc.spawn;
-  delete childProc.spawnSync;
-  delete childProc.fork;
-  delete childProc.execFile;
-  delete childProc.execFileSync;
-  delete childProc._forkChild; // eslint-disable-line no-underscore-dangle
-  delete childProc.ChildProcess;
-
   switch (environment) {
     case 'node-cjs': {
       if (process.env.JSEVAL_MODE === 'b') {

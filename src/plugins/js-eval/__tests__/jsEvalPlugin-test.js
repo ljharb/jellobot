@@ -53,7 +53,7 @@ describe('jsEvalPlugin', () => {
     expect(output).toEqual('(timeout) 1');
   });
 
-  it.skip(`exposes node core modules`, async () => {
+  it(`exposes node core modules`, async () => {
     const output = await testEval(
       `n> fs.writeFileSync('foo', '..'); process.nextTick(() => fs.unlinkSync('foo')); child_process.execSync('cat foo')+''`,
     );
