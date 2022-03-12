@@ -73,6 +73,7 @@ module.exports = async function jsEvalPlugin({
       '--rm',
       `--name=${name}`,
       `--net=none`,
+      `--pids-limit=50`,
       `-eJSEVAL_MODE=${mode}`,
       `-eJSEVAL_ENV=${envs[mode]}`,
       `-eJSEVAL_TIMEOUT=${timeoutMs}`,
