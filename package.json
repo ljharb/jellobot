@@ -64,6 +64,7 @@
     "json5": "^2.2.0",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.7",
+    "npm-package-arg": "^9.0.2",
     "prettier": "^1.19.1",
     "shell-escape": "^0.2.0",
     "string.prototype.at": "^1.0.3",

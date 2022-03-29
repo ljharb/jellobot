@@ -20,7 +20,7 @@ it('works', async () => {
 });
 
 it('works for searches', async () => {
-  const output = await testNpm('npm ~bootstrap');
+  const output = await testNpm('npm ?bootstrap');
 
   const results = output.split(' ⸺ ');
   expect(results.length).toBeGreaterThan(2);
@@ -29,4 +29,10 @@ it('works for searches', async () => {
   expect(beforeSpace).toEqual('npm.im/bootstrap');
   expect(afterSpace.split('|')[0]).toMatch(/^\d+\.\d+\.\d+/);
   expect(afterSpace.split('|')[1]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+});
+
+it('pre-validates against invalid package names', async () => {
+  const output = await testNpm('npm %wot');
+
+  expect(output).toBe('that doesn’t look like a valid package specifier');
 });

@@ -1,3 +1,4 @@
+const npa = require('npm-package-arg');
 const { messageToFactoid } = require('../factoids/factoidsPlugin');
 const exec = require('../../utils/exec');
 
@@ -20,12 +21,7 @@ module.exports = async function npmPlugin(msg) {
 
   msg.handling();
 
-  if (!/^[a-zA-Z0-9_.@/~-]{3,}$/.test(name)) {
-    msg.respondWithMention(`that doesn't look like a valid package name`);
-    return;
-  }
-
-  if (name.startsWith('~')) {
+  if (name.startsWith('?')) {
     try {
       const stdout = await exec('npm', ['search', name.slice(1), '--json']);
       const data = JSON.parse(stdout);
@@ -49,6 +45,13 @@ module.exports = async function npmPlugin(msg) {
       msg.respondWithMention('Failed to look up packages');
     }
   } else {
+    try {
+      npa(name);
+    } catch (err) {
+      msg.respondWithMention(`that doesn’t look like a valid package specifier`);
+      return;
+    }
+
     try {
       const stdout = await exec('npm', ['info', name, '--json']);
       const data = JSON.parse(stdout);
