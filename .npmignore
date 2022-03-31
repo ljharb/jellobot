@@ -4,3 +4,4 @@ jellobot-confi*.json
 scripts/env.sh
 *.tgz
 
+.github
