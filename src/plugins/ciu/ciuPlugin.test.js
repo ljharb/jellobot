@@ -14,7 +14,7 @@ it('works with features agents', async () => {
   const output = await testCiu('ciu grid css');
 
   expect(output).toBe(
-    'CSS Grid Layout (level 1) (IE 9~, Edge 16, FF 52, Chrome 57, Opera 44, Safari 10.1, iOS 10.3, Android 98) 94.72% https://caniuse.com/css-grid',
+    'CSS Grid Layout (level 1) (IE 9~, Edge 16, FF 52, Chrome 57, Opera 44, Safari 10.1, iOS 10.3, Android 99) 94.72% https://caniuse.com/css-grid',
   );
 });
 
@@ -22,14 +22,16 @@ it('works with features agents 2', async () => {
   const output = await testCiu('ciu modules');
 
   expect(output).toBe(
-    'JavaScript modules via script tag (Edge 16, FF 60, Chrome 61, Opera 48, Safari 11, iOS 11.0-11.2, Android 98) 92.8% https://caniuse.com/es6-module, see also https://caniuse.com/es6-module-dynamic-import',
+    'JavaScript modules via script tag (Edge 16, FF 60, Chrome 61, Opera 48, Safari 11, iOS 11.0-11.2, Android 99) 92.8% https://caniuse.com/es6-module, see also https://caniuse.com/es6-module-dynamic-import',
   );
 });
 
 it('works with features agents 3', async () => {
   const output = await testCiu('ciu subgrid');
 
-  expect(output).toBe('CSS Subgrid (FF 71) 3.91% https://caniuse.com/css-subgrid');
+  expect(output).toBe(
+    'CSS Subgrid (FF 71, Safari TP) 3.91% https://caniuse.com/css-subgrid',
+  );
 });
 
 it('works with features agents 4', async () => {
@@ -44,7 +46,7 @@ it('works with total usage percent support rounding', async () => {
   const output = await testCiu('ciu keyboardevent-key');
 
   expect(output).toBe(
-    'KeyboardEvent.key (IE 9~, Edge 79, FF 29, Chrome 51, Opera 12.1, Safari 10.1, iOS 10.3, Android 98) 96% https://caniuse.com/keyboardevent-key',
+    'KeyboardEvent.key (IE 9~, Edge 79, FF 29, Chrome 51, Opera 12.1, Safari 10.1, iOS 10.3, Android 99) 96% https://caniuse.com/keyboardevent-key',
   );
 });
 
@@ -52,6 +54,6 @@ it('works with search', async () => {
   const output = await testCiu('ciu keyboard key');
 
   expect(output).toBe(
-    'KeyboardEvent.key (IE 9~, Edge 79, FF 29, Chrome 51, Opera 12.1, Safari 10.1, iOS 10.3, Android 98) 96% https://caniuse.com/keyboardevent-key, see also https://caniuse.com/keyboardevent-which, https://caniuse.com/keyboardevent-location, https://caniuse.com/keyboardevent-code, https://caniuse.com/keyboardevent-charcode',
+    'KeyboardEvent.key (IE 9~, Edge 79, FF 29, Chrome 51, Opera 12.1, Safari 10.1, iOS 10.3, Android 99) 96% https://caniuse.com/keyboardevent-key, see also https://caniuse.com/keyboardevent-which, https://caniuse.com/keyboardevent-location, https://caniuse.com/keyboardevent-code, https://caniuse.com/keyboardevent-charcode',
   );
 });
