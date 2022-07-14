@@ -30,7 +30,7 @@ it('works with features agents 3', async () => {
   const output = await testCiu('ciu subgrid');
 
   expect(output).toMatch(
-    /^CSS Subgrid \(FF [\d.]+, Safari TP\) [\d.]+% https:\/\/caniuse.com\/css-subgrid$/,
+    /^CSS Subgrid \(FF [\d.]+, Safari (?:TP|[\d.]+), iOS [\d.]+\) [\d.]+% https:\/\/caniuse.com\/css-subgrid$/,
   );
 });
 
@@ -38,7 +38,7 @@ it('works with features agents 4', async () => {
   const output = await testCiu('ciu :has');
 
   expect(output).toMatch(
-    /^:has\(\) CSS relational pseudo-class \(Safari [\d.]+, iOS [\d.]+\) [\d.]+% https:\/\/caniuse.com\/css-has$/,
+    /^:has\(\) CSS relational pseudo-class \(Chrome [\d.]+, Safari [\d.]+, iOS [\d.]+\) [\d.]+% https:\/\/caniuse.com\/css-has$/,
   );
 });
 
