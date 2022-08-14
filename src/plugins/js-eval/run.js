@@ -52,8 +52,17 @@ async function run(code, environment, timeout) {
     case 'node-cjs': {
       if (process.env.JSEVAL_MODE === 'b') {
         /* eslint global-require: 1 */
+        require('airbnb-js-shims');
         require('string.prototype.at/auto');
         require('array.prototype.at/auto');
+        require('array.prototype.group/auto');
+        require('array.prototype.grouptomap/auto');
+        require('array.prototype.flat/auto');
+        require('array.prototype.flatmap/auto');
+        require('array.prototype.with/auto');
+        require('array.prototype.tosorted/auto');
+        require('array.prototype.toreversed/auto');
+        require('array.prototype.tospliced/auto');
         require('@bloomberg/record-tuple-polyfill');
       }
       const script = new Script(code);
