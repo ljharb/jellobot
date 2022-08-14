@@ -65,7 +65,7 @@ async function run() {
 
   function nvmExec(command) {
     return ssh.exec(
-      `source ~/.nvm/nvm.sh; nvm install 17 --latest-npm && ${command}`,
+      `source ~/.nvm/nvm.sh; nvm install node --latest-npm && ${command}`,
     );
   }
 
