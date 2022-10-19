@@ -81,9 +81,9 @@
   },
   "devDependencies": {
     "acorn": "^7.4.1",
-    "aud": "^2.0.0",
+    "aud": "^2.0.1",
     "babel-jest": "^27.5.1",
-    "eslint": "^8.19.0",
+    "eslint": "^8.25.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
