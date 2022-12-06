@@ -63,6 +63,15 @@ async function run(code, environment, timeout) {
         require('array.prototype.tosorted/auto');
         require('array.prototype.toreversed/auto');
         require('array.prototype.tospliced/auto');
+        require('set.prototype.union/auto');
+        require('set.prototype.intersection/auto');
+        require('set.prototype.difference/auto');
+        require('set.prototype.symmetricdifference/auto');
+        require('set.prototype.issubsetof/auto');
+        require('set.prototype.issupersetof/auto');
+        require('set.prototype.isdisjointfrom/auto');
+        require('es-set/auto');
+        require('es-map/auto');
         require('@bloomberg/record-tuple-polyfill');
       }
       const script = new Script(code);
