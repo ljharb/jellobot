@@ -1,23 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`works 1`] = `
-Object {
-  "plugins": Object {
-    "jsEval": Object {
+{
+  "plugins": {
+    "jsEval": {
       "timeout": 5000,
     },
   },
-  "servers": Array [
-    Object {
-      "channels": Array [
-        Object {
+  "servers": [
+    {
+      "channels": [
+        {
           "name": "##jellobot-test",
         },
       ],
       "commandPrefix": "!",
       "debug": false,
-      "ircClientConfig": Object {
-        "channels": Array [
+      "ircClientConfig": {
+        "channels": [
           "##jellobot-test",
         ],
         "realName": "jellobot",
