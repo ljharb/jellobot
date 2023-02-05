@@ -73,6 +73,9 @@ async function run(code, environment, timeout) {
         require('es-set/auto');
         require('es-map/auto');
         require('@bloomberg/record-tuple-polyfill');
+        require('suppressed-error/auto');
+        require('es-iterator-helpers/auto');
+        require('arraybuffer.prototype.detached/auto');
       }
       const script = new Script(code);
       global.module = module;
