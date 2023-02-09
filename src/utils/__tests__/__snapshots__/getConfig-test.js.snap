@@ -21,7 +21,6 @@ exports[`works 1`] = `
           "##jellobot-test",
         ],
         "realName": "jellobot",
-        "retryCount": 10,
       },
       "nick": "jellobot",
       "password": null,

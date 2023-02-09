@@ -55,7 +55,7 @@ exports.processConfig = (customConfig) => {
       channels: server.channels
         .filter((x) => !x.requiresAuth)
         .map(({ name }) => name),
-      retryCount: 10,
+      // retryCount: 10,
     };
 
     if (server.password) {
