@@ -76,6 +76,7 @@ async function run(code, environment, timeout) {
         require('suppressed-error/auto');
         require('es-iterator-helpers/auto');
         require('arraybuffer.prototype.detached/auto');
+        require('disposablestack/auto');
       }
       const script = new Script(code);
       global.module = module;

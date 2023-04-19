@@ -66,6 +66,7 @@
     "chalk": "^4.1.2",
     "cheerio": "^1.0.0-rc.10",
     "dirsum": "^0.1.1",
+    "disposablestack": "^1.1.0",
     "es-iterator-helpers": "^1.0.5",
     "es-map": "^1.0.4",
     "es-set": "^1.1.0",
