@@ -13384,7 +13384,7 @@
 			"changes": []
 		},
 		"jwt sessions": {
-			"value": "Don't use JWT for sessions. http://cryto.net/~joepie91/blog/2016/06/13/stop-using-jwt-for-sessions -- JWT was never meant to be used for sessions, and its popularity happened purely because of marketing: https://youtu.be/GrLtOjCTB1s?t=1h2m44s  |  Instead, use session cookies: https://gist.github.com/joepie91/cf5fd6481a31477b12dc33af453f9a1d",
+			"value": "Don't use JWT for sessions. http://cryto.net/~joepie91/blog/2016/06/13/stop-using-jwt-for-sessions -- JWT was never meant to be used for sessions, and its popularity happened purely because of marketing: https://youtu.be/GrLtOjCTB1s?t=1h2m44s | Instead, use session cookies: https://gist.github.com/joepie91/cf5fd6481a31477b12dc33af453f9a1d https://authzed.com/blog/pitfalls-of-jwt-authorization",
 			"creator": "ljharb",
 			"date": "2020-06-05T23:07:38.348Z",
 			"popularity": 38,
