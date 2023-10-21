@@ -30,7 +30,7 @@ it('works with features agents 3', async () => {
   const output = await testCiu('ciu subgrid');
 
   expect(output).toMatch(
-    /^CSS Subgrid \(FF [\d.]+, Safari (?:TP|[\d.]+), iOS [\d.]+\) [\d.]+% https:\/\/caniuse.com\/css-subgrid$/,
+    /^CSS Subgrid \(Edge [\d.]+, FF [\d.]+, Chrome [\d.]+, Opera [\d.]+, Safari (?:TP|[\d.]+), iOS [\d.]+, Android [\d.]+\) [\d.]+% https:\/\/caniuse.com\/css-subgrid$/,
   );
 });
 
