@@ -12,7 +12,7 @@ RUN node_version=${node_version} \
 RUN node --version
 
 # install shims, and acorn+nearley needed by engine262
-RUN npm i --prefix /run airbnb-js-shims@latest string.prototype.at@latest array.prototype.at@latest @bloomberg/record-tuple-polyfill@latest nearley@latest array.prototype.group@latest array.prototype.grouptomap@latest array.prototype.flat@latest array.prototype.flatmap@latest array.prototype.with@latest array.prototype.tosorted@latest array.prototype.toreversed@latest array.prototype.tospliced@latest set.prototype.union set.prototype.intersection set.prototype.difference set.prototype.symmetricdifference set.prototype.issubsetof set.prototype.issupersetof set.prototype.isdisjointfrom es-set es-map suppressed-error es-iterator-helpers arraybuffer.prototype.detached disposablestack
+RUN npm i --prefix /run airbnb-js-shims@latest string.prototype.at@latest array.prototype.at@latest @bloomberg/record-tuple-polyfill@latest nearley@latest object.groupby@latest map.groupby@latest array.prototype.flat@latest array.prototype.flatmap@latest array.prototype.with@latest array.prototype.tosorted@latest array.prototype.toreversed@latest array.prototype.tospliced@latest set.prototype.union set.prototype.intersection set.prototype.difference set.prototype.symmetricdifference set.prototype.issubsetof set.prototype.issupersetof set.prototype.isdisjointfrom es-set es-map suppressed-error es-iterator-helpers arraybuffer.prototype.detached disposablestack promise.try math.sumprecise regexp.escape promise.prototype.finally
 RUN curl https://engine262.js.org/engine262/engine262.js -o /run/node_modules/engine262.js
 
 FROM debian:10-slim

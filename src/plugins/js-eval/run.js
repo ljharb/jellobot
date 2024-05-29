@@ -52,31 +52,39 @@ async function run(code, environment, timeout) {
     case 'node-cjs': {
       if (process.env.JSEVAL_MODE === 'b') {
         /* eslint global-require: 1 */
+        require('@bloomberg/record-tuple-polyfill');
         require('airbnb-js-shims');
-        require('string.prototype.at/auto');
         require('array.prototype.at/auto');
-        require('array.prototype.group/auto');
-        require('array.prototype.grouptomap/auto');
         require('array.prototype.flat/auto');
         require('array.prototype.flatmap/auto');
-        require('array.prototype.with/auto');
-        require('array.prototype.tosorted/auto');
         require('array.prototype.toreversed/auto');
+        require('array.prototype.tosorted/auto');
         require('array.prototype.tospliced/auto');
-        require('set.prototype.union/auto');
-        require('set.prototype.intersection/auto');
-        require('set.prototype.difference/auto');
-        require('set.prototype.symmetricdifference/auto');
-        require('set.prototype.issubsetof/auto');
-        require('set.prototype.issupersetof/auto');
-        require('set.prototype.isdisjointfrom/auto');
-        require('es-set/auto');
-        require('es-map/auto');
-        require('@bloomberg/record-tuple-polyfill');
-        require('suppressed-error/auto');
-        require('es-iterator-helpers/auto');
+        require('array.prototype.with/auto');
         require('arraybuffer.prototype.detached/auto');
         require('disposablestack/auto');
+        require('es-iterator-helpers/auto');
+
+        require('es-map/auto');
+        require('map.groupby/auto');
+
+        require('es-set/auto');
+        require('set.prototype.difference/auto');
+        require('set.prototype.intersection/auto');
+        require('set.prototype.isdisjointfrom/auto');
+        require('set.prototype.issubsetof/auto');
+        require('set.prototype.issupersetof/auto');
+        require('set.prototype.symmetricdifference/auto');
+        require('set.prototype.union/auto');
+        require('math.sumprecise/auto');
+        require('object.groupby/auto');
+
+        require('promise.prototype.finally/auto');
+        require('promise.try/auto');
+
+        require('regexp.escape/auto');
+        require('string.prototype.at/auto');
+        require('suppressed-error/auto');
       }
       const script = new Script(code);
       global.module = module;
