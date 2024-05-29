@@ -1192,7 +1192,7 @@
 			"popularity": 7
 		},
 		"otbs": {
-			"value": "The One True Brace style: https://en.wikipedia.org/wiki/Indent_style#Variant:_1TBS_.28OTBS.29",
+			"value": "The One True Brace style: https://en.wikipedia.org/wiki/Indentation_style#One_True_Brace",
 			"popularity": 106,
 			"editors": [
 				"ljharb"
@@ -1203,6 +1203,12 @@
 					"editor": "ljharb",
 					"old-value": "The One True Brace style: http://en.wikipedia.org/wiki/Indent_style#Variant:_1TBS",
 					"new-value": "The One True Brace style: https://en.wikipedia.org/wiki/Indent_style#Variant:_1TBS_.28OTBS.29"
+				},
+				{
+					"date": "2024-05-29T18:00:00.123Z",
+					"editor": "ljharb",
+					"old-value": "The One True Brace style: https://en.wikipedia.org/wiki/Indent_style#Variant:_1TBS_.28OTBS.29",
+					"new-value": "The One True Brace style: https://en.wikipedia.org/wiki/Indentation_style#One_True_Brace"
 				}
 			]
 		},
