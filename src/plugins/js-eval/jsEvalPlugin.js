@@ -69,6 +69,7 @@ module.exports = async function jsEvalPlugin({
   try {
     const args = [
       'run',
+      '--platform=linux/amd64',
       '-i',
       '--rm',
       `--name=${name}`,

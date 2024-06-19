@@ -38,7 +38,7 @@ it('works with features agents 4', async () => {
   const output = await testCiu('ciu :has');
 
   expect(output).toMatch(
-    /^:has\(\) CSS relational pseudo-class \(Edge [\d.]+, Chrome [\d.]+, Opera [\d.]+, Safari [\d.]+, iOS [\d.]+, Android [\d.]+\) [\d.]+% https:\/\/caniuse.com\/css-has$/,
+    /^:has\(\) CSS relational pseudo-class \(Edge [\d.]+, FF [\d.]+, Chrome [\d.]+, Opera [\d.]+, Safari [\d.]+, iOS [\d.]+, Android [\d.]+\) [\d.]+% https:\/\/caniuse.com\/css-has$/,
   );
 });
 
