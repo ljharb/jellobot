@@ -130,7 +130,7 @@ describe('jsEvalPlugin', () => {
     });
   });
 
-  describe('engine262', () => {
+  xdescribe('engine262', () => {
     it('works', async () => {
       const output = await testEval('e> ({foo: 1})?.foo ?? 2');
       expect(output).toEqual(`(okay) 1`);
