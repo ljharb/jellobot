@@ -166,6 +166,165 @@ async function run(code, environment, timeout) {
       });
     }
 
+    case 'deno': {
+      const cp = require('child_process');
+
+      // copied verbatim from src/utils/exec.js
+      // TODO: shared utils with Docker container?
+      const exec = function exec(cmd, args, { env, stdin, timeout: timeout2 } = {}) {
+        let data = '';
+
+        const dataPromise = new Promise((resolve, reject) => {
+          const proc = cp.spawn(cmd, args, { env });
+
+          if (stdin) {
+            proc.stdin.write(stdin);
+            proc.stdin.end();
+          }
+
+          proc.stdout.on('data', (chunk) => {
+            data += chunk;
+          });
+
+          proc.stderr.on('data', (chunk) => {
+            data += chunk;
+          });
+
+          proc.on('error', reject);
+
+          proc.on('exit', (status) => {
+            if (status !== 0) {
+              reject(Object.assign(new Error(data), { status }));
+            } else {
+              resolve(data.trim());
+            }
+          });
+        });
+
+        if (timeout2) {
+          let timer;
+
+          return Promise.race([
+            dataPromise.finally(() => clearTimeout(timer)),
+            new Promise((resolve) => {
+              timer = setTimeout(resolve, timeout);
+            }).then(() => {
+              throw Object.assign(new Error(data), { name: 'TimeoutError' }); // send data received so far in the error msg
+            }),
+          ]);
+        }
+
+        return dataPromise;
+      };
+
+      // Prepare exec output and possible error.
+      let out;
+      let errored = false;
+
+      // A very naive function to return the last expression
+      // in multiline semicolon-separated code.
+      const returnLastExpression = function returnLastExpression(code2) {
+        const exprs = code2.split(';');
+        const last = exprs.pop();
+        return [exprs, `return ${last}`].join(';');
+      };
+
+      // Deno evals code at expression position, wrapped in a console.log(<code here>).
+      // If we receive a statement, or code with multiple semicolon seperated expressions,
+      // we need to wrap it in an expression and also return the last expression of that code.
+      // We use an IIFE to achieve that, and try various ways to express the code,
+      // and we return the one that succeeds.
+      //
+      // TODO:
+      // - run all of them and somehow rank the results by the most likely to be correct,
+      //   using some heuristic.
+      // - differentiate between errors and successful responses. Currently all are
+      //   reported as (okay) unless the actual spawn fails.
+      //   (differentiate also between cli failure and script exceptions?)
+      const attempts = [
+        code,
+        `(() => { try { ${code} } catch (e) { return e } })()`,
+        `(() => { try { ${returnLastExpression(code)} } catch (e) { return e } })()`,
+      ];
+      let attempt;
+
+      /* eslint no-cond-assign: 0 */
+      while ((attempt = attempts.shift())) {
+        try {
+          /* eslint no-await-in-loop: 0 */
+          out = await exec(
+            'deno',
+            [
+              'eval',
+
+              '--print', // Print result to stdout
+              '--ext',
+              'ts', // Treat code input as a .ts file
+
+              '--no-remote', // Do not resolve remote modules
+              '--no-npm', // Do not resolve npm modules
+
+              '--no-config', // Disable automatic loading of the configuration file
+              '--no-lock', // Disable auto discovery of the lock file
+
+              // Enable unstable features and APIs
+              '--unstable-broadcast-channel',
+              '--unstable-cron',
+              '--unstable-kv',
+              '--unstable-temporal',
+              '--unstable-unsafe-proto',
+              '--unstable-webgpu',
+              '--unstable-worker-options',
+
+              attempt,
+            ],
+            {
+              env: {
+                // We pass current env otherwise PATH is empty
+                // and deno command isn't found (ENOENT)
+                ...process.env,
+                NO_COLOR: true, // Tell deno to not color its output
+              },
+              timeout,
+            },
+          );
+          if (out === 'undefined') throw out;
+          errored = false;
+          break;
+        } catch (error) {
+          errored = true;
+          out = error.message;
+        }
+      }
+
+      out = out || '(empty)';
+
+      // --print will return a \nundefined when the value is consumed by a manual console print, so we remove it
+      out = out.replace('\nundefined', '');
+
+      // don't leak file system details
+      out = out.replace(/at file:.*$/gm, '');
+
+      // remove trailing spaces on each line
+      out = out.replace(/\s+$/gm, '');
+
+      // replace newlines with full stops
+      out = out.replace(/\n/, '. ');
+
+      // remove extra spaces
+      out = out.replace(/\s{1,}/g, ' ');
+
+      // remove our wrappers from the output
+      out = out
+        .replace('console.log((() => { try { ;', '')
+        .replace(' } catch (e) { return e } })())', '')
+        .replace('return ', '');
+
+      if (errored) throw out;
+
+      return out;
+    }
+
     default:
       throw new RangeError(`Invalid environment: ${environment}`);
   }

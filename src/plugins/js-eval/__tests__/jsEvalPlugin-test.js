@@ -152,4 +152,44 @@ describe('jsEvalPlugin', () => {
       expect(output3).toEqual(`(fail) TypeError: 2\n    at <anonymous>:1:22`);
     });
   });
+
+  describe('deno', () => {
+    it('works', async () => {
+      const output = await testEval('d> 2+2');
+      expect(output).toEqual('(okay) 4');
+    });
+
+    it('outputs console.warn', async () => {
+      const output = await testEval('d> console.warn("test")');
+      expect(output).toEqual(`(okay) test`);
+    });
+
+    it(`errors when it should`, async () => {
+      const output = await testEval('d> 2++2');
+      expect(output).toEqual(
+        `(fail) error: The module's source code could not be parsed: Expected ';', got 'numeric literal (2, 2)'. 2++2 ~`,
+      );
+
+      const output2 = await testEval('d> throw 2');
+      expect(output2).toEqual('(okay) 2');
+
+      const output3 = await testEval('d> throw new TypeError(2)');
+      expect(output3).toEqual('(okay) TypeError: 2');
+    });
+
+    it(`replies to user`, async () => {
+      const output = await testEval(`d>'ok'`, { mentionUser: 'jay' });
+      expect(output).toEqual(`jay, ok`);
+    });
+
+    it(`handles empty input`, async () => {
+      const output = await testEval(`d>  `);
+      expect(output).toEqual(`(okay) (empty)`);
+    });
+
+    it('correctly returns last expression', async () => {
+      const output = await testEval('d> let x:string = "hello world";x');
+      expect(output).toEqual('(okay) hello world');
+    });
+  });
 });

@@ -12,6 +12,7 @@ const helpMsg = `n> node stable, b> babel, s> node vm.Script, m> node vm.SourceT
 const timeoutMs = 5000;
 const envs = {
   e: 'engine262',
+  d: 'deno',
   s: 'script',
   m: 'module',
   n: 'node-cjs',
