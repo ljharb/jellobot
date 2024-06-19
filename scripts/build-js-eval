@@ -3,7 +3,7 @@
 
 dir="src/plugins/js-eval"
 echo ">>> Building container"
-docker --platform linux/amd64 build -t brigand/js-eval $dir -f $dir/Dockerfile
+docker build --platform linux/amd64 -t brigand/js-eval $dir -f $dir/Dockerfile
 
 # default_code='"Hello, world!"'
 # echo ">>> Testing container"
