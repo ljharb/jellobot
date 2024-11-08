@@ -207,7 +207,7 @@ async function run(code, environment, timeout) {
           return Promise.race([
             dataPromise.finally(() => clearTimeout(timer)),
             new Promise((resolve) => {
-              timer = setTimeout(resolve, timeout);
+              timer = global.setTimeout(resolve, timeout);
             }).then(() => {
               throw Object.assign(new Error(data), { name: 'TimeoutError' }); // send data received so far in the error msg
             }),
