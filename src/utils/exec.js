@@ -1,11 +1,11 @@
 const cp = require('child_process');
 
 // better version of util.promisify(child_process.exec) that throws when exit code is not success (0)
-module.exports = function exec(cmd, args, { stdin, timeout } = {}) {
+module.exports = function exec(cmd, args, { env, stdin, timeout } = {}) {
   let data = '';
 
   const dataPromise = new Promise((resolve, reject) => {
-    const proc = cp.spawn(cmd, args);
+    const proc = cp.spawn(cmd, args, { env });
 
     if (stdin) {
       proc.stdin.write(stdin);

@@ -1,4 +1,5 @@
 const npa = require('npm-package-arg');
+const semver = require('semver');
 const { messageToFactoid } = require('../factoids/factoidsPlugin');
 const exec = require('../../utils/exec');
 
@@ -6,6 +7,13 @@ const getDesc = (description, maxLen = 100) =>
   description
     ? `${description.slice(0, maxLen)}${description.length > maxLen ? '…' : ''}`
     : '(no description)';
+
+const env = semver.satisfies(process.version, '>= 20')
+  ? {
+      ...process.env,
+      NODE_OPTIONS: '--disable-warning=ExperimentalWarning',
+    }
+  : process.env;
 
 module.exports = async function npmPlugin(msg) {
   if (!msg.command) return;
@@ -23,7 +31,7 @@ module.exports = async function npmPlugin(msg) {
 
   if (name.startsWith('?')) {
     try {
-      const stdout = await exec('npm', ['search', name.slice(1), '--json']);
+      const stdout = await exec('npm', ['search', name.slice(1), '--json'], { env });
       const data = JSON.parse(stdout);
 
       msg.respondWithMention(
@@ -53,7 +61,7 @@ module.exports = async function npmPlugin(msg) {
     }
 
     try {
-      const stdout = await exec('npm', ['info', name, '--json']);
+      const stdout = await exec('npm', ['info', name, '--json'], { env });
       const data = JSON.parse(stdout);
       const version = data['dist-tags'] && data['dist-tags'].latest; // data.version is not necessarily published yet
 
@@ -68,6 +76,7 @@ module.exports = async function npmPlugin(msg) {
           .replace('|', ' '),
       );
     } catch (err) {
+      console.error(err);
       msg.respondWithMention('Failed to look up package');
     }
   }
