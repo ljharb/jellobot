@@ -17,6 +17,8 @@ const envs = {
   m: 'module',
   n: 'node-cjs',
   b: 'node-cjs',
+  t: 'node-ts',
+  tm: 'node-mts',
 };
 
 module.exports = async function jsEvalPlugin({

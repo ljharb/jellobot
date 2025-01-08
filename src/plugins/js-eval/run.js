@@ -1,8 +1,8 @@
 const { Script, SourceTextModule, createContext } = require('vm');
 const util = require('util');
-const builtinModules = require('module').builtinModules.filter(
-  (s) => !/^_|\//.test(s),
-);
+const Module = require('module');
+
+const builtinModules = Module.builtinModules.filter((s) => !/^_|\//.test(s));
 const { setTimeout } = require('timers/promises');
 
 // code taken from https://github.com/devsnek/docker-js-eval/run.js
@@ -49,6 +49,9 @@ function exposeBuiltinInGlobal(name) {
 
 async function run(code, environment, timeout) {
   switch (environment) {
+    case 'node-ts':
+      code = Module.stripTypeScriptTypes(code); // eslint-disable-line no-param-reassign
+    // intentional fallthrough
     case 'node-cjs': {
       if (process.env.JSEVAL_MODE === 'b') {
         /* eslint global-require: 1 */
@@ -100,6 +103,9 @@ async function run(code, environment, timeout) {
       return inspect(result);
     }
 
+    case 'node-mts':
+      code = Module.stripTypeScriptTypes(code); // eslint-disable-line no-param-reassign
+    // intentional fallthrough
     case 'module': {
       const module = new SourceTextModule(code, {
         context: createContext(Object.create(null)),
