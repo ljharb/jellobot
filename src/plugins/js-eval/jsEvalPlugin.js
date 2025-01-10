@@ -7,7 +7,7 @@ const exec = require('../../utils/exec');
 const processTopLevelAwait = require('./processTopLevelAwait');
 const { parserPlugins, transformPlugins } = require('./babelPlugins');
 
-const helpMsg = `n> node stable, b> babel, s> node vm.Script, m> node vm.SourceTextModule, e> engine262`;
+const helpMsg = `n> node stable, b> babel, s> node vm.Script, m> node vm.SourceTextModule, e> engine262, d> deno, t> node-ts, tm> node-mts`;
 
 const timeoutMs = 5000;
 const envs = {
