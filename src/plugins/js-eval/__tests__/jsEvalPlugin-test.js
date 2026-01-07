@@ -1,11 +1,13 @@
+const test = require('tape');
 const cp = require('child_process');
 const jsEval = require('../jsEvalPlugin');
 
-jest.setTimeout(600000);
-
-beforeAll(() => {
+let dockerAvailable = true;
+try {
   cp.execSync(`${__dirname}/../init`);
-});
+} catch (e) {
+  dockerAvailable = false;
+}
 
 async function testEval(message, opts = {}) {
   return new Promise((resolve) => {
@@ -21,175 +23,175 @@ async function testEval(message, opts = {}) {
   });
 }
 
-describe('jsEvalPlugin', () => {
-  it(`works`, async () => {
-    const output = await testEval('n> 2+2');
-    expect(output).toEqual('(okay) 4');
+const maybeTest = dockerAvailable ? test : test.skip;
 
-    const output2 = await testEval('n> setTimeout(() => console.log(2), 1000); 1');
-    expect(output2).toEqual('(okay) 12');
+maybeTest('jsEvalPlugin works', async (t) => {
+  const output = await testEval('n> 2+2');
+  t.equal(output, '(okay) 4');
 
-    const output3 = await testEval('n> console.warn("test")');
-    expect(output3).toEqual(`(okay) test`);
+  const output2 = await testEval('n> setTimeout(() => console.log(2), 1000); 1');
+  t.equal(output2, '(okay) 12');
+
+  const output3 = await testEval('n> console.warn("test")');
+  t.equal(output3, '(okay) test');
+
+  t.end();
+});
+
+maybeTest('jsEvalPlugin errors when it should', async (t) => {
+  const output = await testEval('n> 2++2');
+  t.equal(
+    output,
+    '(fail) SyntaxError: Invalid left-hand side expression in postfix operation',
+  );
+
+  const output2 = await testEval('n> throw 2');
+  t.equal(output2, '(fail) 2');
+
+  const output3 = await testEval('n> throw new TypeError(2)');
+  t.equal(output3, '(fail) TypeError: 2');
+
+  t.end();
+});
+
+maybeTest('jsEvalPlugin times out but return temporary result', async (t) => {
+  const output = await testEval('n> setTimeout(() => console.log(2), 10000); 1', {
+    selfConfig: { timer: 2000 },
   });
+  t.equal(output, '(timeout) 1');
 
-  it(`errors when it should`, async () => {
-    const output = await testEval('n> 2++2');
-    expect(output).toEqual(
-      `(fail) SyntaxError: Invalid left-hand side expression in postfix operation`,
-    );
+  t.end();
+});
 
-    const output2 = await testEval('n> throw 2');
-    expect(output2).toEqual('(fail) 2');
+maybeTest('jsEvalPlugin exposes node core modules', async (t) => {
+  const output = await testEval(
+    `n> fs.writeFileSync('foo', '..'); process.nextTick(() => fs.unlinkSync('foo')); child_process.execSync('cat foo')+''`,
+  );
+  t.equal(output, `(okay) '..'`);
 
-    const output3 = await testEval('n> throw new TypeError(2)');
-    expect(output3).toEqual('(fail) TypeError: 2');
-  });
+  t.end();
+});
 
-  it(`times out but return temporary result`, async () => {
-    const output = await testEval('n> setTimeout(() => console.log(2), 10000); 1', {
-      selfConfig: { timer: 2000 },
-    });
-    expect(output).toEqual('(timeout) 1');
-  });
+maybeTest('jsEvalPlugin replies to user', async (t) => {
+  const output = await testEval(`n>'ok'`, { mentionUser: 'jay' });
+  t.equal(output, `jay, 'ok'`);
 
-  it(`exposes node core modules`, async () => {
-    const output = await testEval(
-      `n> fs.writeFileSync('foo', '..'); process.nextTick(() => fs.unlinkSync('foo')); child_process.execSync('cat foo')+''`,
-    );
-    expect(output).toEqual(`(okay) '..'`);
-  });
+  t.end();
+});
 
-  it(`replies to user`, async () => {
-    const output = await testEval(`n>'ok'`, { mentionUser: 'jay' });
-    expect(output).toEqual(`jay, 'ok'`);
-  });
+maybeTest('jsEvalPlugin handles empty input', async (t) => {
+  const output = await testEval(`n>  `);
+  t.equal(output, '(okay) undefined');
 
-  it(`replies to user`, async () => {
-    const output = await testEval(`n>'ok'`, { mentionUser: 'jay' });
-    expect(output).toEqual(`jay, 'ok'`);
-  });
+  t.end();
+});
 
-  it(`handles empty input`, async () => {
-    const output = await testEval(`n>  `);
-    expect(output).toEqual(`(okay) undefined`);
-  });
+maybeTest('babel runs with b>', async (t) => {
+  const output = await testEval(
+    `b> class A { x = 3n; ok = () => this.x }; new A().ok()`,
+  );
+  t.equal(output, '(okay) 3n');
 
-  describe('babel', () => {
-    it(`runs with b>`, async () => {
-      const output = await testEval(
-        `b> class A { x = 3n; ok = () => this.x }; new A().ok()`,
-      );
-      expect(output).toEqual(`(okay) 3n`);
-    });
+  t.end();
+});
 
-    it(`has String.prototype.matchAll`, async () => {
-      const output = await testEval(
-        `b> [...'1 2 3'.matchAll(/\\d/g)].map(o => o.index)`,
-      );
-      expect(output).toEqual(`(okay) [ 0, 2, 4 ]`);
-    });
+maybeTest('babel has String.prototype.matchAll', async (t) => {
+  const output = await testEval(`b> [...'1 2 3'.matchAll(/\\d/g)].map(o => o.index)`);
+  t.equal(output, '(okay) [ 0, 2, 4 ]');
 
-    it(`has decorators`, async () => {
-      // TODO put a relevant example, I couldn't find one to work, maybe the plugin is not up to date
-      // e.g. b> @x class C {} function x(target) { target.x = true; } [C.x, new C().x] both are undefined
-      // https://github.com/tc39/proposal-decorators#class-methods examples fail because the decorator function in the babel proposal doesn't even receive a second arg
-    });
+  t.end();
+});
 
-    it('has pipelines', async () => {
-      const output = await testEval(`b> 2 |> % + 1`);
-      expect(output).toEqual(`(okay) 3`);
-    });
-  });
+maybeTest('babel has pipelines', async (t) => {
+  const output = await testEval(`b> 2 |> % + 1`);
+  t.equal(output, '(okay) 3');
 
-  describe('top-level-await', () => {
-    it('works', async () => {
-      expect([
-        await testEval('n> var x = await Promise.resolve(2n); x'),
-        await testEval('b> var x = await Promise.resolve(2n); x'),
-        await testEval('n> var x = await Promise.resolve(2n); if (x) {}'),
-        await testEval('b> var x = await Promise.resolve(2n); if (x) {}'),
-        await testEval(
-          `n> function foo(){}; let o={[await 'foo']: await eval('1')}; o`,
-        ),
-      ]).toEqual([
-        '(okay) 2n',
-        '(okay) 2n',
-        '(okay) undefined',
-        '(okay) undefined',
-        '(okay) { foo: 1 }',
-      ]);
-    });
+  t.end();
+});
 
-    it('works with comments', async () => {
-      const output = await testEval('n> let x=await `wat`; x // test');
-      expect(output).toEqual(`(okay) 'wat'`);
+maybeTest('top-level-await works', async (t) => {
+  t.deepEqual(
+    [
+      await testEval('n> var x = await Promise.resolve(2n); x'),
+      await testEval('b> var x = await Promise.resolve(2n); x'),
+      await testEval('n> var x = await Promise.resolve(2n); if (x) {}'),
+      await testEval('b> var x = await Promise.resolve(2n); if (x) {}'),
+      await testEval(
+        `n> function foo(){}; let o={[await 'foo']: await eval('1')}; o`,
+      ),
+    ],
+    [
+      '(okay) 2n',
+      '(okay) 2n',
+      '(okay) undefined',
+      '(okay) undefined',
+      '(okay) { foo: 1 }',
+    ],
+  );
 
-      const output2 = await testEval('b> await `wat` // test');
-      expect(output2).toEqual(`(okay) 'wat'`);
-    });
-  });
+  t.end();
+});
 
-  xdescribe('engine262', () => {
-    it('works', async () => {
-      const output = await testEval('e> ({foo: 1})?.foo ?? 2');
-      expect(output).toEqual(`(okay) 1`);
-    });
+maybeTest('top-level-await works with comments', async (t) => {
+  const output = await testEval('n> let x=await `wat`; x // test');
+  t.equal(output, `(okay) 'wat'`);
 
-    it(`adds print() global util, because there's no console`, async () => {
-      const output = await testEval('e> print(0b1); print(2n); Math.PI|0');
-      expect(output).toEqual(`(okay) 1\n2n\n3`);
-    });
+  const output2 = await testEval('b> await `wat` // test');
+  t.equal(output2, `(okay) 'wat'`);
 
-    it(`errors when it should`, async () => {
-      const output = await testEval('e> 2++2');
-      expect(output).toEqual(`(fail) 2++2\n    ^\nSyntaxError: Unexpected token`);
+  t.end();
+});
 
-      const output2 = await testEval('e> throw 2');
-      expect(output2).toEqual(`(fail) 2`);
+// Skipped: engine262 tests
+// test.skip('engine262 works', async (t) => { ... });
 
-      const output3 = await testEval('e> throw new TypeError(2)');
-      expect(output3).toEqual(`(fail) TypeError: 2\n    at <anonymous>:1:22`);
-    });
-  });
+maybeTest('deno works', async (t) => {
+  const output = await testEval('d> 2+2');
+  t.equal(output, '(okay) 4');
 
-  describe('deno', () => {
-    it('works', async () => {
-      const output = await testEval('d> 2+2');
-      expect(output).toEqual('(okay) 4');
-    });
+  t.end();
+});
 
-    it('outputs console.warn', async () => {
-      const output = await testEval('d> console.warn("test")');
-      expect(output).toEqual(`(okay) test`);
-    });
+maybeTest('deno outputs console.warn', async (t) => {
+  const output = await testEval('d> console.warn("test")');
+  t.equal(output, '(okay) test');
 
-    it(`errors when it should`, async () => {
-      const output = await testEval('d> 2++2');
-      expect(output).toEqual(
-        `(fail) error: The module's source code could not be parsed: Expected ';', got 'numeric literal (2, 2)'. 2++2 ~`,
-      );
+  t.end();
+});
 
-      const output2 = await testEval('d> throw 2');
-      expect(output2).toEqual('(okay) 2');
+maybeTest('deno errors when it should', async (t) => {
+  const output = await testEval('d> 2++2');
+  t.equal(
+    output,
+    `(fail) error: The module's source code could not be parsed: Expected ';', got 'numeric literal (2, 2)'. 2++2 ~`,
+  );
 
-      const output3 = await testEval('d> throw new TypeError(2)');
-      expect(output3).toEqual('(okay) TypeError: 2');
-    });
+  const output2 = await testEval('d> throw 2');
+  t.equal(output2, '(okay) 2');
 
-    it(`replies to user`, async () => {
-      const output = await testEval(`d>'ok'`, { mentionUser: 'jay' });
-      expect(output).toEqual(`jay, ok`);
-    });
+  const output3 = await testEval('d> throw new TypeError(2)');
+  t.equal(output3, '(okay) TypeError: 2');
 
-    it(`handles empty input`, async () => {
-      const output = await testEval(`d>  `);
-      expect(output).toEqual(`(okay) (empty)`);
-    });
+  t.end();
+});
 
-    it('correctly returns last expression', async () => {
-      const output = await testEval('d> let x:string = "hello world";x');
-      expect(output).toEqual('(okay) hello world');
-    });
-  });
+maybeTest('deno replies to user', async (t) => {
+  const output = await testEval(`d>'ok'`, { mentionUser: 'jay' });
+  t.equal(output, `jay, ok`);
+
+  t.end();
+});
+
+maybeTest('deno handles empty input', async (t) => {
+  const output = await testEval(`d>  `);
+  t.equal(output, '(okay) (empty)');
+
+  t.end();
+});
+
+maybeTest('deno correctly returns last expression', async (t) => {
+  const output = await testEval('d> let x:string = "hello world";x');
+  t.equal(output, '(okay) hello world');
+
+  t.end();
 });

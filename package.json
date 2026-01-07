@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint --ext=js,mjs .",
     "pretest": "npm run lint",
-    "tests-only": "jest",
+    "tests-only": "tape 'src/**/*.test.js' 'src/**/*-test.js'",
     "test": "npm run tests-only",
     "posttest": "npx npm@'>=10.2' audit --production",
     "preformat": "npx prettier --write '{scripts/**/*.sh,README.md}'",
@@ -98,16 +98,13 @@
   },
   "devDependencies": {
     "acorn": "^8.15.0",
-    "babel-jest": "^30.2.0",
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jasmine": "^4.2.2",
     "eslint-plugin-prettier": "^5.5.4",
-    "jest": "^30.2.0",
-    "jest-cli": "^30.2.0",
     "nearley": "^2.20.1",
-    "ssh2": "^1.17.0"
+    "ssh2": "^1.17.0",
+    "tape": "^5.9.0"
   }
 }

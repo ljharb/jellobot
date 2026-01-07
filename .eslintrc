@@ -7,13 +7,10 @@
   "plugins": [
     "prettier",
     "import",
-    "jasmine",
   ],
   "env": {
     "browser": true,
     "node": true,
-    "jest": true,
-    "jasmine": true,
   },
   "settings": {
     "ecmaFeatures": {
@@ -25,8 +22,10 @@
     "prettier/prettier": "error",
     "import/no-extraneous-dependencies": [2, {
       "devDependencies": [
-        "**/__tests__/**", // jest pattern
-        "scripts/**", // our dev scripts
+        "**/__tests__/**",
+        "**/*.test.js",
+        "**/*-test.js",
+        "scripts/**",
       ]
     }],
     "max-len": [1, 120],

@@ -1,3 +1,4 @@
+const test = require('tape');
 const superagent = require('superagent');
 const mdnPlugin = require('./mdnPlugin');
 
@@ -19,16 +20,18 @@ const asyncMock = (v) =>
     },
   );
 
-it('works', async () => {
-  const spy = jest.spyOn(superagent, 'get').mockImplementation(
+test('works', async (t) => {
+  const originalGet = superagent.get;
+  superagent.get = () =>
     asyncMock({
       ok: true,
       text: '<body><article><p>Foo bar</p><div class="notecard deprecated"><p>Deprecated</p></div></article></body>',
-    }),
-  );
+    });
+
   const output = await testMdn('mdn Object __proto__');
 
-  expect(output).toEqual('DEPRECATED Foo bar https://mdn.io/Object-__proto__');
+  t.equal(output, 'DEPRECATED Foo bar https://mdn.io/Object-__proto__');
 
-  spy.mockRestore();
+  superagent.get = originalGet;
+  t.end();
 });

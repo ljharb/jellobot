@@ -1,17 +1,18 @@
+const test = require('tape');
 const overflow = require('../textOverflow');
 
 const asciiAlpha = 'abcdefghijklmnopqrstuvwxyz';
 const rainbowFlag = '🏳️‍🌈';
 
-it('works for ascii identity cases', () => {
+test('works for ascii identity cases', (t) => {
   const max = asciiAlpha.length;
 
   const inner = (size) => {
     const s = asciiAlpha.slice(0, size);
-    expect({ size, text: overflow.ellipses(s, max).toString() }).toEqual({
-      size,
-      text: s,
-    });
+    t.deepEqual(
+      { size, text: overflow.ellipses(s, max).toString() },
+      { size, text: s },
+    );
   };
 
   inner(0);
@@ -20,34 +21,39 @@ it('works for ascii identity cases', () => {
   inner(25);
   inner(26);
   inner(27);
+  t.end();
 });
 
-it('works for ascii trim cases', () => {
+test('works for ascii trim cases', (t) => {
   const inner = (size) => {
     const s = asciiAlpha;
-    expect({ size, text: overflow.ellipses(s, size).toString() }).toEqual({
-      size,
-      text: `${s.slice(0, size - 4)} …`,
-    });
+    t.deepEqual(
+      { size, text: overflow.ellipses(s, size).toString() },
+      { size, text: `${s.slice(0, size - 4)} …` },
+    );
   };
 
   inner(5);
   inner(20);
   inner(25);
+  t.end();
 });
 
-it('works for flag identity cases', () => {
+test('works for flag identity cases', (t) => {
   const bytesPer = Buffer.from(rainbowFlag, 'utf8').length;
 
   const inner = (count) => {
     const s = rainbowFlag.repeat(count);
-    expect({
-      count,
-      text: overflow.ellipses(s, count * bytesPer).toString(),
-    }).toEqual({
-      count,
-      text: s,
-    });
+    t.deepEqual(
+      {
+        count,
+        text: overflow.ellipses(s, count * bytesPer).toString(),
+      },
+      {
+        count,
+        text: s,
+      },
+    );
   };
 
   inner(1);
@@ -55,9 +61,10 @@ it('works for flag identity cases', () => {
   inner(3);
   inner(4);
   inner(5);
+  t.end();
 });
 
-it('works for flag trim cases', () => {
+test('works for flag trim cases', (t) => {
   const inner = (count, pre = '', post = '') => {
     const flags = rainbowFlag.repeat(count);
     const maxLength = Buffer.from(flags).length;
@@ -70,19 +77,22 @@ it('works for flag trim cases', () => {
       Buffer.from(pre + rainbowFlag.repeat(expectedFlags)),
       Buffer.from('@'),
     ]).toString('utf8');
-    expect({
-      count,
-      pre,
-      post,
-      maxLength,
-      text: overflow.overflow(whole, maxLength, '@').toString(),
-    }).toEqual({
-      count,
-      pre,
-      post,
-      maxLength,
-      text: expected,
-    });
+    t.deepEqual(
+      {
+        count,
+        pre,
+        post,
+        maxLength,
+        text: overflow.overflow(whole, maxLength, '@').toString(),
+      },
+      {
+        count,
+        pre,
+        post,
+        maxLength,
+        text: expected,
+      },
+    );
   };
 
   for (let i = 1; i <= 5; i += 1) {
@@ -90,4 +100,5 @@ it('works for flag trim cases', () => {
     inner(i, '', 'z');
     inner(i, '', rainbowFlag);
   }
+  t.end();
 });

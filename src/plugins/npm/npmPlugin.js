@@ -56,7 +56,7 @@ module.exports = async function npmPlugin(msg) {
     try {
       npa(name);
     } catch (err) {
-      msg.respondWithMention(`that doesn’t look like a valid package specifier`);
+      msg.respondWithMention("that doesn't look like a valid package specifier");
       return;
     }
 

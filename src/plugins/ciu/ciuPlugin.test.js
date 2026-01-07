@@ -1,3 +1,4 @@
+const test = require('tape');
 const ciuPlugin = require('./ciuPlugin');
 
 async function testCiu(message) {
@@ -10,50 +11,62 @@ async function testCiu(message) {
   });
 }
 
-it('works with features agents', async () => {
+test('works with features agents', async (t) => {
   const output = await testCiu('ciu grid css');
 
-  expect(output).toMatch(
+  t.match(
+    output,
     /^CSS Grid Layout \(level 1\) \(IE \d+~, Edge \d+, FF \d+, Chrome \d+, Opera \d+, Safari \d+.\d+, iOS \d+.\d+, Android \d+\) [\d.]+% https:\/\/caniuse.com\/css-grid$/,
   );
+  t.end();
 });
 
-it('works with features agents 2', async () => {
+test('works with features agents 2', async (t) => {
   const output = await testCiu('ciu modules');
 
-  expect(output).toMatch(
+  t.match(
+    output,
     /^JavaScript modules via script tag \(Edge \d+, FF [\d.]+, Chrome [\d.]+, Opera \d+, Safari \d+, iOS \d+\.\d+-\d+\.\d+, Android \d+\) [\d.]+% https:\/\/caniuse.com\/es6-module, see also https:\/\/caniuse.com\/es6-module-dynamic-import$/,
   );
+  t.end();
 });
 
-it('works with features agents 3', async () => {
+test('works with features agents 3', async (t) => {
   const output = await testCiu('ciu subgrid');
 
-  expect(output).toMatch(
+  t.match(
+    output,
     /^CSS Subgrid \(Edge [\d.]+, FF [\d.]+, Chrome [\d.]+, Opera [\d.]+, Safari (?:TP|[\d.]+), iOS [\d.]+, Android [\d.]+\) [\d.]+% https:\/\/caniuse.com\/css-subgrid$/,
   );
+  t.end();
 });
 
-it('works with features agents 4', async () => {
+test('works with features agents 4', async (t) => {
   const output = await testCiu('ciu :has');
 
-  expect(output).toMatch(
+  t.match(
+    output,
     /^:has\(\) CSS relational pseudo-class \(Edge [\d.]+, FF [\d.]+, Chrome [\d.]+, Opera [\d.]+, Safari [\d.]+, iOS [\d.]+, Android [\d.]+\) [\d.]+% https:\/\/caniuse.com\/css-has$/,
   );
+  t.end();
 });
 
-it('works with total usage percent support rounding', async () => {
+test('works with total usage percent support rounding', async (t) => {
   const output = await testCiu('ciu keyboardevent-key');
 
-  expect(output).toMatch(
+  t.match(
+    output,
     /^KeyboardEvent.key \(IE \d~, Edge [\d.]+, FF [\d.]+, Chrome [\d.]+, Opera [\d.]+, Safari [\d.]+, iOS [\d.]+, Android [\d.]+\) [\d.]+% https:\/\/caniuse.com\/keyboardevent-key$/,
   );
+  t.end();
 });
 
-it('works with search', async () => {
+test('works with search', async (t) => {
   const output = await testCiu('ciu keyboard key');
 
-  expect(output).toMatch(
+  t.match(
+    output,
     /^KeyboardEvent.key \(IE \d~, Edge [\d.]+, FF [\d.]+, Chrome [\d.]+, Opera [\d.]+, Safari [\d.]+, iOS [\d.]+, Android [\d.]+\) [\d.]+% https:\/\/caniuse.com\/keyboardevent-key, see also https:\/\/caniuse.com\/keyboardevent-which, https:\/\/caniuse.com\/keyboardevent-location, https:\/\/caniuse.com\/keyboardevent-code, https:\/\/caniuse.com\/keyboardevent-charcode$/,
   );
+  t.end();
 });

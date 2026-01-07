@@ -1,36 +1,41 @@
+const test = require('tape');
 const pasteUrlToRaw = require('../pasteUrlToRaw');
 
-it('bpaste', () => {
-  expect(pasteUrlToRaw('https://bpaste.net/show/4463220a2c07')).toEqual({
+test('bpaste', (t) => {
+  t.deepEqual(pasteUrlToRaw('https://bpaste.net/show/4463220a2c07'), {
     js: 'https://bpaste.net/raw/4463220a2c07',
   });
-  expect(pasteUrlToRaw('https://bpaste.net/raw/4463220a2c07')).toEqual({
+  t.deepEqual(pasteUrlToRaw('https://bpaste.net/raw/4463220a2c07'), {
     js: 'https://bpaste.net/raw/4463220a2c07',
   });
+  t.end();
 });
 
-it('pastebin', () => {
-  expect(pasteUrlToRaw('http://pastebin.com/iydu8g2t')).toEqual({
+test('pastebin', (t) => {
+  t.deepEqual(pasteUrlToRaw('http://pastebin.com/iydu8g2t'), {
     js: 'https://pastebin.com/raw/iydu8g2t',
   });
-  expect(pasteUrlToRaw('http://pastebin.com/raw/iydu8g2t')).toEqual({
+  t.deepEqual(pasteUrlToRaw('http://pastebin.com/raw/iydu8g2t'), {
     js: 'https://pastebin.com/raw/iydu8g2t',
   });
+  t.end();
 });
 
-it('dpaste', () => {
-  expect(pasteUrlToRaw('http://dpaste.com/3XB47RJ')).toEqual({
+test('dpaste', (t) => {
+  t.deepEqual(pasteUrlToRaw('http://dpaste.com/3XB47RJ'), {
     js: 'http://dpaste.com/3XB47RJ.txt',
   });
-  expect(pasteUrlToRaw('http://dpaste.com/3XB47RJ.txt')).toEqual({
+  t.deepEqual(pasteUrlToRaw('http://dpaste.com/3XB47RJ.txt'), {
     js: 'http://dpaste.com/3XB47RJ.txt',
   });
+  t.end();
 });
 
-it('codepen', () => {
-  expect(pasteUrlToRaw('https://codepen.io/brigand/pen/JERLwv')).toEqual({
+test('codepen', (t) => {
+  t.deepEqual(pasteUrlToRaw('https://codepen.io/brigand/pen/JERLwv'), {
     js: 'https://codepen.io/brigand/pen/JERLwv.js',
     css: 'https://codepen.io/brigand/pen/JERLwv.css',
     html: 'https://codepen.io/brigand/pen/JERLwv.html',
   });
+  t.end();
 });
