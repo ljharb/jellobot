@@ -2,21 +2,20 @@
 # sets this to the latest version from nodejs.org/download/release
 ARG node_version=v23.6.0
 
-FROM debian:10-slim
+FROM debian:12-slim
 ARG node_version
 
-RUN apt-get update && apt-get install -y xz-utils ca-certificates curl unzip --no-install-recommends
+RUN apt-get update && apt-get install -y xz-utils ca-certificates curl unzip libatomic1 --no-install-recommends
 RUN node_version=${node_version} \
   && curl -fsSLO --compressed "https://nodejs.org/download/release/$node_version/node-$node_version-linux-x64.tar.xz" \
   && tar -xJf "node-$node_version-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner
 RUN node --version
 
-# install deno
-ENV DENO_INSTALL=/usr/local
-RUN curl -fsSL https://deno.land/x/install/install.sh -o install-deno.sh \
-  && sh install-deno.sh \
-  # && chown node:node /usr/local/bin/deno \
-  && rm install-deno.sh
+# Install deno
+RUN curl -fsSL https://github.com/denoland/deno/releases/download/v1.40.5/deno-x86_64-unknown-linux-gnu.zip -o /tmp/deno.zip \
+  && unzip /tmp/deno.zip -d /usr/local/bin/ \
+  && rm /tmp/deno.zip \
+  && chmod +x /usr/local/bin/deno
 RUN deno --version
 
 # install shims, and acorn+nearley needed by engine262

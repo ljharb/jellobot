@@ -9,7 +9,9 @@ const { parserPlugins, transformPlugins } = require('./babelPlugins');
 
 const helpMsg = `n> node stable, b> babel, s> node vm.Script, m> node vm.SourceTextModule, e> engine262, d> deno, t> node-ts, tm> node-mts`;
 
-const timeoutMs = 5000;
+const timeoutMs = process.env.JSEVAL_TIMEOUT_MS
+  ? parseInt(process.env.JSEVAL_TIMEOUT_MS, 10)
+  : 5000;
 const envs = {
   e: 'engine262',
   d: 'deno',
@@ -27,7 +29,9 @@ module.exports = async function jsEvalPlugin({
   message,
   dockerCmd = 'docker',
   runFilePath = '/run/run.js',
+  selfConfig = {},
 }) {
+  const effectiveTimeout = selfConfig.timer || timeoutMs;
   const mode = message[0];
 
   if (message[1] !== '>') {
@@ -80,7 +84,7 @@ module.exports = async function jsEvalPlugin({
       `--pids-limit=50`,
       `-eJSEVAL_MODE=${mode}`,
       `-eJSEVAL_ENV=${envs[mode]}`,
-      `-eJSEVAL_TIMEOUT=${timeoutMs}`,
+      `-eJSEVAL_TIMEOUT=${effectiveTimeout}`,
       'brigand/js-eval',
       'node',
       '--experimental-vm-modules', // used by m>
@@ -89,7 +93,10 @@ module.exports = async function jsEvalPlugin({
       runFilePath,
     ];
 
-    const data = await exec(dockerCmd, args, { stdin: code, timeout: timeoutMs });
+    const data = await exec(dockerCmd, args, {
+      stdin: code,
+      timeout: effectiveTimeout,
+    });
 
     const clean = data
       .replace(/(\S)\s*⬊ (undefined|null)$/, '$1')

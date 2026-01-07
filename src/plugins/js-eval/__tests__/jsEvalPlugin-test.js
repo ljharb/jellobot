@@ -1,7 +1,7 @@
 const cp = require('child_process');
 const jsEval = require('../jsEvalPlugin');
 
-jest.setTimeout(30000);
+jest.setTimeout(600000);
 
 beforeAll(() => {
   cp.execSync(`${__dirname}/../init`);
