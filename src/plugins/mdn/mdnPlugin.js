@@ -107,10 +107,7 @@ module.exports = async function mdnPlugin(msg) {
 
   const article = $('article');
 
-  const isDeprecated = article
-    .find('.notecard.deprecated')
-    .text()
-    .trim();
+  const isDeprecated = article.find('.notecard.deprecated').text().trim();
 
   const firstP = article
     .find('p') // if cheerio was less bad, we could do .first(':not(.notecard) > p')

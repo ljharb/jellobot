@@ -1,15 +1,13 @@
 const irc = require('irc-upd');
-const chalk = require('chalk');
+const { styleText } = require('util');
 const { maybeClearCache } = require('./utils/requireCache');
 const init = require('./plugins/initPlugins');
-
-chalk.enabled = true;
 
 const { readAndProcessConfig } = require('./utils/getConfig');
 const plugins = require('./plugins/plugins');
 const changeNick = require('./utils/changeNick');
 
-const logBotPrefix = chalk.black.bgYellow('BOT');
+const logBotPrefix = styleText(['black', 'bgYellow'], 'BOT');
 
 let globalConfig = readAndProcessConfig();
 
@@ -136,7 +134,7 @@ clients.forEach((client) => {
   });
 
   client.addListener('error', (message) => {
-    console.error(`${chalk.red('IRC Error')}:`, message);
+    console.error(`${styleText('red', 'IRC Error')}:`, message);
   });
 
   const connectStartTime = Date.now();
@@ -182,5 +180,5 @@ clients.forEach((client) => {
 });
 
 if (globalConfig.verbose) {
-  console.log(`${logBotPrefix}: ${chalk.yellow(`Running in verbose mode.`)}`);
+  console.log(`${logBotPrefix}: ${styleText('yellow', 'Running in verbose mode.')}`);
 }

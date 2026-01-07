@@ -23,8 +23,7 @@ it('works', async () => {
   const spy = jest.spyOn(superagent, 'get').mockImplementation(
     asyncMock({
       ok: true,
-      text:
-        '<body><article><p>Foo bar</p><div class="notecard deprecated"><p>Deprecated</p></div></article></body>',
+      text: '<body><article><p>Foo bar</p><div class="notecard deprecated"><p>Deprecated</p></div></article></body>',
     }),
   );
   const output = await testMdn('mdn Object __proto__');

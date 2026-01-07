@@ -1,10 +1,9 @@
-const { promisify: pify } = require('util');
+const { promisify: pify, styleText } = require('util');
 const os = require('os');
 const fs = require('fs');
 const assert = require('assert');
 const Bluebird = require('bluebird');
 const { Client } = require('ssh2');
-const chalk = require('chalk');
 const shellEscape = require('shell-escape');
 
 const randId = () => `randId:${Math.floor(Math.random() * 2 ** 32)}`;
@@ -174,7 +173,10 @@ class SshConnection {
           if (code) {
             if (!opts.silent) {
               console.error(
-                chalk.red(`Failed to execute command with status code ${code}`),
+                styleText(
+                  'red',
+                  `Failed to execute command with status code ${code}`,
+                ),
               );
             }
             let res = '';
@@ -221,13 +223,10 @@ class SshConnection {
 
   async writeIfDifferentAndReturnChanged(path, content, owner) {
     // create the directory if needed
-    await this.exec(
-      `mkdir -p ${path
-        .split('/')
-        .slice(0, -1)
-        .join('/')}`,
-      { root: true, silent: true },
-    );
+    await this.exec(`mkdir -p ${path.split('/').slice(0, -1).join('/')}`, {
+      root: true,
+      silent: true,
+    });
 
     let current = null;
     try {

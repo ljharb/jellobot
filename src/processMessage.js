@@ -1,5 +1,5 @@
-const chalk = require('chalk');
-const { safeDump: yamlStringify } = require('js-yaml');
+const { styleText } = require('util');
+const { dump: yamlStringify } = require('js-yaml');
 const overflow = require('./utils/textOverflow');
 
 function processMessage(client, config, logs, from, to, message) {
@@ -19,10 +19,7 @@ function processMessage(client, config, logs, from, to, message) {
   };
 
   const prepareMessage = (to2, raw) => {
-    const text = String(raw)
-      .split('\n')
-      .join(' ')
-      .slice(0, 1000);
+    const text = String(raw).split('\n').join(' ').slice(0, 1000);
 
     const prefix = client.currentPrefix || `${client.currentNick}!${'_'.repeat(50)}`;
 
@@ -45,7 +42,7 @@ function processMessage(client, config, logs, from, to, message) {
   const say = (to2, raw) => {
     const { bytes } = prepareMessage(to2, raw);
     client.say(to2, bytes);
-    console.log(`${chalk.green(to2)} ${bytes}`);
+    console.log(`${styleText('green', to2)} ${bytes}`);
   };
 
   messageObj.sayTo = say;
@@ -138,9 +135,9 @@ function processMessage(client, config, logs, from, to, message) {
   // in the actual plugin, omit the first argument
   messageObj.handling = (pluginName, extraInfo) => {
     let log = '';
-    log += `${chalk.red(to)}`;
-    log += ` ${chalk.yellow(from)}`;
-    log += ` ${chalk.blue(pluginName)}`;
+    log += `${styleText('red', to)}`;
+    log += ` ${styleText('yellow', from)}`;
+    log += ` ${styleText('blue', pluginName)}`;
     log += ` ${messageObj.message}`;
     console.log(log);
     if (extraInfo !== undefined) {
@@ -148,7 +145,7 @@ function processMessage(client, config, logs, from, to, message) {
     }
   };
   messageObj.log = (pluginName, extraInfo) => {
-    process.stderr.write(`${chalk.blue(pluginName)}: `);
+    process.stderr.write(`${styleText('blue', pluginName)}: `);
     console.log(extraInfo);
   };
 
