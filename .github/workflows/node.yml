@@ -24,7 +24,7 @@ jobs:
       matrix: ${{ fromJson(needs.matrix.outputs.requireds) }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - uses: ljharb/actions/node/install@main
         name: 'nvm install ${{ matrix.node-version }} && npm install'
         with:
