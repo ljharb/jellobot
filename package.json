@@ -61,7 +61,7 @@
     "arraybuffer.prototype.detached": "^1.0.3",
     "bluebird": "^3.7.2",
     "caniuse-db": "^1.0.30001762",
-    "cheerio": "^1.1.2",
+    "cheerio": "^1.0.0-rc.12",
     "dirsum": "^0.1.1",
     "disposablestack": "^1.1.7",
     "es-iterator-helpers": "^1.2.2",
