@@ -1,11 +1,18 @@
 'use strict';
 
 const superagent = require('superagent');
-const prettier = require('prettier');
+const { ESLint } = require('eslint');
 const cheerio = require('cheerio');
 const pasteUrlToRaw = require('./pasteUrlToRaw');
 const { createGist, deleteGist } = require('./createGist');
 const getJsfiddle = require('./jsfiddle/getJsfiddle');
+
+// Format code using ESLint with the project's config
+const formatWithEslint = async (code) => {
+	const eslint = new ESLint({ fix: true });
+	const results = await eslint.lintText(code);
+	return results[0].output || code;
+};
 
 const matchUrl = (text) => {
 
@@ -114,7 +121,7 @@ module.exports = async function repastePlugin(msg) {
 
 	if (url) {
 		return getCode(msg, url).then(
-			(res) => {
+			async (res) => {
 
 				const jsSuffix = msg.to === '#reactjs' ? '.jsx' : '.js';
 				const files = {
@@ -128,12 +135,7 @@ module.exports = async function repastePlugin(msg) {
 				}
 
 				try {
-					const formatted = prettier.format(res.js, {
-						// printWidth: 100,
-						bracketSpacing: false,
-						singleQuote: true,
-						trailingComma: true,
-					});
+					const formatted = await formatWithEslint(res.js);
 					files[jsSuffix] = formatted;
 					delete files[`code${jsSuffix}`];
 				} catch (e) {
